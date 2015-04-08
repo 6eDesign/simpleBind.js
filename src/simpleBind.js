@@ -8,7 +8,9 @@ var simpleBind = (function(w,d,$,pub){
     filters: {}
   };
 
+  // Initialization runs on DOM Ready event: 
   var init = function() {
+    // domCollection collects all bound elements
     domCollection();
   };
 
@@ -46,7 +48,19 @@ var simpleBind = (function(w,d,$,pub){
     return data;
   };
 
-
+  var addLoadEvent = function(func) {
+    var oldonload = window.onload;
+    if (typeof window.onload != 'function') {
+      window.onload = func;
+    } else {
+      window.onload = function() {
+        if (oldonload) {
+          oldonload();
+        }
+        func();
+      }
+    }
+  }; 
 
   var first = true;
   domCollection = function(base) {
@@ -140,7 +154,8 @@ var simpleBind = (function(w,d,$,pub){
           }
           break;
         case 'repeat':
-          var repeatIndex = setupRepeat(state.boundElems[objName][i],obj);
+          // obj is an [array]: 
+          var repeatIndex = setupRepeat(state.boundElems[objName][i]);
           bindRepeat(repeatIndex,state.boundElems[objName][i],obj);
           break;
         default:
@@ -149,11 +164,17 @@ var simpleBind = (function(w,d,$,pub){
     }
   };
 
-  setupRepeat = function(config,array) {
+  /*
+    setupRepeat(config)
+
+    config:    |   Object    |      Required     |      The config object stored in state.boundElems[objName][index]
+
+  */
+  setupRepeat = function(config) {
     if(typeof config['repeatindex'] == 'undefined') {
       config['repeatindex'] = 'repeat-' + (state.repeatcount);
       var repeated = config.elem.getElementsByTagName('*')[0];
-      rebind(repeated,config.objKey,'__repeat-' + config.objName + '0',config.objName);
+      rebind(repeated,config.objKey,'__repeat-' + config.objName + '0');
       domCollection(config.elem);
       repeated.style.display = 'none';
       state.repeats['repeat-' + state.repeatcount] = {
@@ -167,6 +188,15 @@ var simpleBind = (function(w,d,$,pub){
     return config['repeatindex'];
   };
 
+
+  /*
+    bindRepeat(index,config,array)
+
+    index:     |   String    |      Required     |      The key used in {state.repeats} used to accesss repeat settings
+    config:    |   Object    |      Required     |      The config object stored in state.boundElems[objName][index]
+    array:     |   Array     |      Required     |      The array to be bound
+
+  */
   bindRepeat = function(index,config,array) {
     var repeatInfo = state.repeats[index];
     if(repeatInfo.elems.length < array.length) {
@@ -174,7 +204,7 @@ var simpleBind = (function(w,d,$,pub){
       var numToCreate = array.length - repeatInfo.elems.length;
       for(var i=0; i < numToCreate; ++i) {
         var newElem = repeatInfo.template.cloneNode(true);
-        rebind(newElem,repeatInfo.baseName + '0', repeatInfo.baseName + '' + repeatInfo.elems.length,config.objName);
+        rebind(newElem,repeatInfo.baseName + '0', repeatInfo.baseName + '' + repeatInfo.elems.length);
         repeatInfo.elems.push(repeatInfo.container.appendChild(newElem));
       }
       domCollection(repeatInfo.container);
@@ -194,7 +224,42 @@ var simpleBind = (function(w,d,$,pub){
     }
   };
 
-  rebind = function(context,oldName,newName,objName) {
+  /*
+    This rebind function is used for simple-repeats.  The repeat setup process clones the DOM
+    node of the provided repeat 'template'.  These DOM nodes have existing data-simplebind*
+    declarations.  This function removves the data-simplebindcollected flag and remaps any 
+    bindings from param.oldName to param.newName.  
+
+    For example, if we call the function like so:
+
+      rebind(document.getElementById('contextDiv'),'someObjName','someNewObjName')
+
+    Then the following HTML: 
+
+      <div id="contextDiv">
+        <p data-simplebindcollected data-simplebind="someObjName.someKey"></p>
+      </div>
+    
+    Will be changed to:
+
+      <div id="contextDiv">
+        <p data-simplebind="someNewObjName.someKey"></p>  
+      </div>
+    
+    This allows this HTML to be re-collected by domCollection (which also accepts a context
+    parameter).  Each object in an array is effectively bound using normal simplebind methodology
+    where the template binding is replaced with "originalBindingName${I}.originalBindingKey"
+    where ${I} represents the array index.
+
+
+    rebind(context,oldName,newName)
+
+    context:      |   Element   |      Required     |      The container element which you would like traversed and rebound
+    oldName:      |   String    |      Required     |      The original object name
+    newName:      |   String    |      Required     |      The new object name
+  
+  */
+  rebind = function(context,oldName,newName) {
     var clean, all = context.getElementsByTagName('*');
     clean = function(elem) {
       var opts = getData(elem);
@@ -214,56 +279,57 @@ var simpleBind = (function(w,d,$,pub){
     }
   };
 
-  // A great function for setting object values
-  // via a string with dot notation:
-  // ex) set({x:{y:{z:2}}},'y.z',3)
-  set = function(obj,str,val) {
-    str = str.split('.');
-    while(str.length > 1) {
-      obj = obj[str.shift()];
-    }
-    return obj[str.shift()] = val;
-  };
 
-  // Same as above but retrieves the value
-  // instead of setting it:
-  get = function(obj,str) {
-    str = str.split('.');
-    for(var i=0; i < str.length; ++i) {
-      if(!obj || typeof obj[str[i]] == 'undefined') {
-        return '';
-      } else {
-        obj = obj[str[i]];
-      }
-    }
-    return obj;
-  };
+  /* =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+    PUBLIC METHODS: 
+  =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
 
-  // PUBLIC METHODS:
+  /*
+    simpleBind.bind(objName, obj)
+
+    objName:    |   String    |      Required     |      Should be a unique identifier for the bound object
+    obj:        |   Object    |      Required     |      A javascript object to be bound 
+
+  */
   pub.bind = function(objName,obj) {
     if(typeof state.boundElems[objName] != 'undefined' && typeof obj == 'object') {
       processBindings(objName,obj);
     }
   };
 
+  /*
+    simpleBind.registerBindHandler(handlerName, handlerFn)
+
+    handlerName:    |     String      |     Required    |     Should be a unique identifier for your bind handler
+    handlerFn:      |     Function    |     Required    |     Callback function for handler, accepts arguments elem and value
+
+  */
   pub.registerBindHandler = function(handlerName,handlerFn) {
     if(typeof handlerName != 'undefined' && typeof handlerFn != 'undefined' && typeof handlerFn == 'function') {
       state.bindHandlers[handlerName] = handlerFn;
     }
   };
 
+  /*
+    simpleBind.registerFilter(filterName,filterFn) 
+
+    filterName    |     String      |     Required     |      Should be a unique identifier for your filter 
+    filterFn      |     Function    |     Required     |      Callback function accepts argument value, returns filtered value
+
+  */
   pub.registerFilter = function(filterName,filterFn) {
     if(typeof filterName != 'undefined' && typeof filterFn != 'undefined' && typeof filterFn == 'function') {
       state.filters[filterName] = filterFn;
     }
   };
 
-  pub.recollectDOM = function(base) {
-    if(typeof base == 'undefined') {
-      domCollection();
-    } else {
-      domCollection(base);
-    }
+  /*
+    simpleBind.recollectDOM(context)
+
+    context      |    DOM Node    |     Optional      |     Optional parameter to specify which portion of DOM should be recollected.  
+  */
+  pub.recollectDOM = function(context) {
+    domCollection((typeof context == 'undefined') ? d.body : context); 
   };
 
   $(d).ready(init);
