@@ -1,5 +1,5 @@
 var simpleBind = (function(w,d,$,pub){
-  var  domCollection, addToBoundElems, processBindings, setupRepeat, bindRepeat, rebind, get, set;
+  var init, getKeys, getData, getAttrs, domCollection, addToBoundElems, processBindings, setupRepeat, bindRepeat, rebind, get, set;
   var state = {
     boundElems: {},
     bindHandlers: {},
@@ -9,12 +9,12 @@ var simpleBind = (function(w,d,$,pub){
   };
 
   // Initialization runs on DOM Ready event: 
-  var init = function() {
+  init = function() {
     // domCollection collects all bound elements
     domCollection();
   };
 
-  var getKeys = function(obj) {
+  getKeys = function(obj) {
     if(Object.keys) {
       return Object.keys(obj);
     } else {
@@ -26,17 +26,7 @@ var simpleBind = (function(w,d,$,pub){
     }
   };
 
-  var getAttrs = function(elem) {
-    var attrs, obj = {};
-    attrs = elem.attributes;
-    for(var i=0; i < attrs.length; ++i) {
-      var attr = attrs.item(i);
-      obj[attr.nodeName] = (attr.hasOwnProperty('value')) ? attr.value : attr.nodeValue;
-    }
-    return obj;
-  };
-
-  var getData = function(elem) {
+  getData = function(elem) {
     var attrs, keys, data = { };
     attrs = getAttrs(elem);
     keys = getKeys(attrs);
@@ -48,21 +38,16 @@ var simpleBind = (function(w,d,$,pub){
     return data;
   };
 
-  var addLoadEvent = function(func) {
-    var oldonload = window.onload;
-    if (typeof window.onload != 'function') {
-      window.onload = func;
-    } else {
-      window.onload = function() {
-        if (oldonload) {
-          oldonload();
-        }
-        func();
-      }
+  getAttrs = function(elem) {
+    var attrs, obj = {};
+    attrs = elem.attributes;
+    for(var i=0; i < attrs.length; ++i) {
+      var attr = attrs.item(i);
+      obj[attr.nodeName] = (attr.hasOwnProperty('value')) ? attr.value : attr.nodeValue;
     }
-  }; 
+    return obj;
+  };
 
-  var first = true;
   domCollection = function(base) {
     base = (typeof base == 'undefined') ? d : base;
     var all = base.getElementsByTagName('*');
@@ -100,7 +85,6 @@ var simpleBind = (function(w,d,$,pub){
         }
       }
     }
-    first = false;
   };
 
   addToBoundElems = function(type,elem,objName,objKey,opts,bindHandlerName) {
@@ -147,15 +131,14 @@ var simpleBind = (function(w,d,$,pub){
           } else {
             if(typeof registeredUndefined[handlerName] == 'undefined') {
               registeredUndefined[handlerName] = true;
-              if(typeof window.s_env != 'undefined' && s_env == 'dev') {
+              if(s_env == 'dev') {
                 console.log("Handler '" + handlerName + "' is undefined.");
               }
             }
           }
           break;
         case 'repeat':
-          // obj is an [array]: 
-          var repeatIndex = setupRepeat(state.boundElems[objName][i]);
+          var repeatIndex = setupRepeat(state.boundElems[objName][i],obj);
           bindRepeat(repeatIndex,state.boundElems[objName][i],obj);
           break;
         default:
@@ -170,11 +153,11 @@ var simpleBind = (function(w,d,$,pub){
     config:    |   Object    |      Required     |      The config object stored in state.boundElems[objName][index]
 
   */
-  setupRepeat = function(config) {
+  setupRepeat = function(config,array) {
     if(typeof config['repeatindex'] == 'undefined') {
       config['repeatindex'] = 'repeat-' + (state.repeatcount);
       var repeated = config.elem.getElementsByTagName('*')[0];
-      rebind(repeated,config.objKey,'__repeat-' + config.objName + '0');
+      rebind(repeated,config.objKey,'__repeat-' + config.objName + '0',config.objName);
       domCollection(config.elem);
       repeated.style.display = 'none';
       state.repeats['repeat-' + state.repeatcount] = {
@@ -204,7 +187,7 @@ var simpleBind = (function(w,d,$,pub){
       var numToCreate = array.length - repeatInfo.elems.length;
       for(var i=0; i < numToCreate; ++i) {
         var newElem = repeatInfo.template.cloneNode(true);
-        rebind(newElem,repeatInfo.baseName + '0', repeatInfo.baseName + '' + repeatInfo.elems.length);
+        rebind(newElem,repeatInfo.baseName + '0', repeatInfo.baseName + '' + repeatInfo.elems.length,config.objName);
         repeatInfo.elems.push(repeatInfo.container.appendChild(newElem));
       }
       domCollection(repeatInfo.container);
@@ -259,8 +242,11 @@ var simpleBind = (function(w,d,$,pub){
     newName:      |   String    |      Required     |      The new object name
   
   */
-  rebind = function(context,oldName,newName) {
+  rebind = function(context,oldName,newName,objName) {
     var clean, all = context.getElementsByTagName('*');
+//    if(typeof state.boundElems[objName] != 'undefined') {
+//      delete state.boundElems[objName];
+//    }
     clean = function(elem) {
       var opts = getData(elem);
       if(typeof opts['simplebindhandler'] != 'undefined') {
@@ -279,6 +265,30 @@ var simpleBind = (function(w,d,$,pub){
     }
   };
 
+  // A great function for setting object values
+  // via a string with dot notation:
+  // ex) set({x:{y:{z:2}}},'y.z',3)
+  set = function(obj,str,val) {
+    str = str.split('.');
+    while(str.length > 1) {
+      obj = obj[str.shift()];
+    }
+    return obj[str.shift()] = val;
+  };
+
+  // Same as above but retrieves the value
+  // instead of setting it:
+  get = function(obj,str) {
+    str = str.split('.');
+    for(var i=0; i < str.length; ++i) {
+      if(!obj || typeof obj[str[i]] == 'undefined') {
+        return '';
+      } else {
+        obj = obj[str[i]];
+      }
+    }
+    return obj;
+  };
 
   /* =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
     PUBLIC METHODS: 
