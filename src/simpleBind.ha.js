@@ -8,9 +8,7 @@ var simpleBind = (function(w,d,$,pub){
     filters: {}
   };
 
-  // Initialization runs on DOM Ready event: 
   init = function() {
-    // domCollection collects all bound elements
     domCollection();
   };
 
@@ -48,15 +46,14 @@ var simpleBind = (function(w,d,$,pub){
     return obj;
   };
 
+  var first = true;
   domCollection = function(base) {
-    console.log('domCollection() called');
     base = (typeof base == 'undefined') ? d : base;
     var all = base.getElementsByTagName('*');
     for(var i=0; i < all.length; ++i) {
       var opts = getData(all[i]);
       if(typeof opts['simplebindcollected'] == 'undefined') {
         if(typeof opts['simplebind'] != 'undefined') {
-          all[i].setAttribute('data-simplebindcollected','true'); 
           opts.simplebind = opts.simplebind.split('.');
           var objName, objKey;
           objName = opts.simplebind.splice(0,1)[0];
@@ -67,7 +64,6 @@ var simpleBind = (function(w,d,$,pub){
         // data-simplebindhandler="handlerName:objName.key.key || data-simplebindhandler="handlerName:objName.$base"
         // the latter returns the whole object
         if(typeof opts['simplebindhandler'] != 'undefined') {
-          all[i].setAttribute('data-simplebindcollected','true'); 
           var handlerName,objName,objKey;
           opts.simplebindhandler = opts.simplebindhandler.split(':');
           handlerName = opts.simplebindhandler.shift();
@@ -79,34 +75,36 @@ var simpleBind = (function(w,d,$,pub){
           addToBoundElems('bindhandler',all[i],objName,objKey,opts,handlerName);
         }
         if(typeof opts['simplerepeat'] != 'undefined') {
-          all[i].setAttribute('data-simplebindcollected','true'); 
           var objName, objKey;
           opts.simplerepeat = opts.simplerepeat.split(':');
           objName = opts.simplerepeat[1];
           objKey = opts.simplerepeat[0];
+
           addToBoundElems('repeat',all[i],objName,objKey,opts);
         }
       }
     }
+    first = false;
   };
 
   addToBoundElems = function(type,elem,objName,objKey,opts,bindHandlerName) {
-    console.log('addToBoundElems()',arguments);
     bindHandlerName = (typeof bindHandlerName == 'undefined') ? false : bindHandlerName;
     elem.setAttribute('data-simplebindcollected','true');
     if(typeof state.boundElems[objName] == 'undefined') {
       state.boundElems[objName] = [];
     }
-    var config = {
+    if(typeof opts['simplefilter'] != 'undefined') {
+
+    }
+
+    state.boundElems[objName].push({
       type: type,
       elem: elem,
       objName: objName,
       objKey: objKey,
       handler: bindHandlerName,
       filter: (typeof opts['simplefilter'] != 'undefined') ? opts['simplefilter'] : false
-    };
-    if(type == 'repeat') { setupRepeat(config); }
-    state.boundElems[objName].push(config);
+    });
   };
 
   var registeredUndefined = {};
@@ -140,7 +138,6 @@ var simpleBind = (function(w,d,$,pub){
           }
           break;
         case 'repeat':
-          console.log('hit repeat case for objName ' + objName, state.boundElems[objName][i], 'binding', obj);
           var repeatIndex = setupRepeat(state.boundElems[objName][i],obj);
           bindRepeat(repeatIndex,state.boundElems[objName][i],obj);
           break;
@@ -150,24 +147,17 @@ var simpleBind = (function(w,d,$,pub){
     }
   };
 
-  /*
-    setupRepeat(config)
-
-    config:    |   Object    |      Required     |      The config object stored in state.boundElems[objName][index]
-
-  */
   setupRepeat = function(config,array) {
     if(typeof config['repeatindex'] == 'undefined') {
       config['repeatindex'] = 'repeat-' + (state.repeatcount);
       var repeated = config.elem.getElementsByTagName('*')[0];
-      repeated = config.elem.removeChild(repeated);
       rebind(repeated,config.objKey,'__repeat-' + config.objName + '0',config.objName);
       domCollection(config.elem);
       repeated.style.display = 'none';
       state.repeats['repeat-' + state.repeatcount] = {
         container: config.elem,
         template: repeated,
-        elems: [ ],
+        elems: [ repeated ],
         baseName: '__repeat-' + config.objName
       }
       ++state.repeatcount;
@@ -175,28 +165,18 @@ var simpleBind = (function(w,d,$,pub){
     return config['repeatindex'];
   };
 
-
-
-  /*
-    bindRepeat(index,config,array)
-
-    index:     |   String    |      Required     |      The key used in {state.repeats} used to accesss repeat settings
-    config:    |   Object    |      Required     |      The config object stored in state.boundElems[objName][index]
-    array:     |   Array     |      Required     |      The array to be bound
-
-  */
-
   bindRepeat = function(index,config,array) {
+    console.log('bindRepeat');
     var repeatInfo = state.repeats[index];
     if(repeatInfo.elems.length < array.length) {
       // add some elements
       var numToCreate = array.length - repeatInfo.elems.length;
+      console.log('numToCreate',numToCreate);
       for(var i=0; i < numToCreate; ++i) {
         var newElem = repeatInfo.template.cloneNode(true);
         rebind(newElem,repeatInfo.baseName + '0', repeatInfo.baseName + '' + repeatInfo.elems.length,config.objName);
         repeatInfo.elems.push(repeatInfo.container.appendChild(newElem));
       }
-      console.log("CALLING domCollection from 'bindRepeat()");
       domCollection(repeatInfo.container);
     }
 
@@ -206,7 +186,6 @@ var simpleBind = (function(w,d,$,pub){
         var removed = repeatInfo.elems.pop();
         repeatInfo.container.removeChild(removed);
       }
-      // console.log(repeatInfo,state.boundElems);
     }
 
     for(var i=0; i < array.length; ++i) {
@@ -215,45 +194,11 @@ var simpleBind = (function(w,d,$,pub){
     }
   };
 
-  /*
-    This rebind function is used for simple-repeats.  The repeat setup process clones the DOM
-    node of the provided repeat 'template'.  These DOM nodes have existing data-simplebind*
-    declarations.  This function removves the data-simplebindcollected flag and remaps any 
-    bindings from param.oldName to param.newName.  
-
-    For example, if we call the function like so:
-
-      rebind(document.getElementById('contextDiv'),'someObjName','someNewObjName')
-
-    Then the following HTML: 
-
-      <div id="contextDiv">
-        <p data-simplebindcollected data-simplebind="someObjName.someKey"></p>
-      </div>
-    
-    Will be changed to:
-
-      <div id="contextDiv">
-        <p data-simplebind="someNewObjName.someKey"></p>  
-      </div>
-    
-    This allows this HTML to be re-collected by domCollection (which also accepts a context
-    parameter).  Each object in an array is effectively bound using normal simplebind methodology
-    where the template binding is replaced with "originalBindingName${I}.originalBindingKey"
-    where ${I} represents the array index.
-
-
-    rebind(context,oldName,newName)
-
-    context:      |   Element   |      Required     |      The container element which you would like traversed and rebound
-    oldName:      |   String    |      Required     |      The original object name
-    newName:      |   String    |      Required     |      The new object name
-  
-  */
-  var rebindCount =0; 
   rebind = function(context,oldName,newName,objName) {
-    console.log('rebind count: ', ++rebindCount,context); 
     var clean, all = context.getElementsByTagName('*');
+//    if(typeof state.boundElems[objName] != 'undefined') {
+//      delete state.boundElems[objName];
+//    }
     clean = function(elem) {
       var opts = getData(elem);
       if(typeof opts['simplebindhandler'] != 'undefined') {
@@ -297,56 +242,31 @@ var simpleBind = (function(w,d,$,pub){
     return obj;
   };
 
-  /* =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
-    PUBLIC METHODS: 
-  =*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* */
-
-  /*
-    simpleBind.bind(objName, obj)
-
-    objName:    |   String    |      Required     |      Should be a unique identifier for the bound object
-    obj:        |   Object    |      Required     |      A javascript object to be bound 
-
-  */
+  // PUBLIC METHODS:
   pub.bind = function(objName,obj) {
     if(typeof state.boundElems[objName] != 'undefined' && typeof obj == 'object') {
       processBindings(objName,obj);
     }
   };
 
-  /*
-    simpleBind.registerBindHandler(handlerName, handlerFn)
-
-    handlerName:    |     String      |     Required    |     Should be a unique identifier for your bind handler
-    handlerFn:      |     Function    |     Required    |     Callback function for handler, accepts arguments elem and value
-
-  */
   pub.registerBindHandler = function(handlerName,handlerFn) {
     if(typeof handlerName != 'undefined' && typeof handlerFn != 'undefined' && typeof handlerFn == 'function') {
       state.bindHandlers[handlerName] = handlerFn;
     }
   };
 
-  /*
-    simpleBind.registerFilter(filterName,filterFn) 
-
-    filterName    |     String      |     Required     |      Should be a unique identifier for your filter 
-    filterFn      |     Function    |     Required     |      Callback function accepts argument value, returns filtered value
-
-  */
   pub.registerFilter = function(filterName,filterFn) {
     if(typeof filterName != 'undefined' && typeof filterFn != 'undefined' && typeof filterFn == 'function') {
       state.filters[filterName] = filterFn;
     }
   };
 
-  /*
-    simpleBind.recollectDOM(context)
-
-    context      |    DOM Node    |     Optional      |     Optional parameter to specify which portion of DOM should be recollected.  
-  */
-  pub.recollectDOM = function(context) {
-    domCollection((typeof context == 'undefined') ? d.body : context); 
+  pub.recollectDOM = function(base) {
+    if(typeof base == 'undefined') {
+      domCollection();
+    } else {
+      domCollection(base);
+    }
   };
 
   $(d).ready(init);
