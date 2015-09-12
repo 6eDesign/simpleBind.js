@@ -1,3 +1,6 @@
+$(document).ready(function(){
+	simpleBind.bind('example',{text: 'hello world'}); 
+}); 
 // var test = (function(w,d,$,pub){
 // 	var exampleArr = [ ]; 
 // 	var boundRepresentation = [ ]; 
