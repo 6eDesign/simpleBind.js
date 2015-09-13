@@ -19,7 +19,7 @@ simpleBind = (function(w,d,$,util,pub){
     var oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
     if(val != oldVal) { 
       val = typeof val == 'string' ? val : JSON.stringify(val,null,2);
-      if(typeof config['simplebindhtml'] != 'undefined' && config.simplebindhtml) { 
+      if(typeof config.opts['simplebindhtml'] != 'undefined' && config.opts.simplebindhtml=="true") { 
         config.elem.innerHTML = val;
       } else { 
         if(config.elem.childNodes.length) { 
