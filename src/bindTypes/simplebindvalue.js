@@ -7,7 +7,7 @@ simpleBind = (function(w,d,$,util,pub){
   var handleInput = function() { 
     var binding = this.getAttribute('data-simplebindvalue').split('.')
       , objName = binding.shift(); 
-    util.set(state.boundObjects[objName],binding.join('.'),this.value);     
+    util.set(state.boundObjects[objName],binding.join('.'),getInputValueByType(this));     
     pub.bind(objName,state.boundObjects[objName]);
     this.setAttribute(changeInitiatorMarker,'true');
     if(objName.indexOf('__repeat') > -1) { 
@@ -27,58 +27,74 @@ simpleBind = (function(w,d,$,util,pub){
     }
   };
 
+  var getInputValueByType = function(elem) { 
+    var type = getInputType(elem); 
+    switch(type) { 
+      case 'checkbox': 
+        return elem.checked;
+      case 'type': 
+      default: 
+        return elem.value; 
+    }; 
+  }; 
+
+  var attachAppropriateEventHandlers = function(elem,inputType) { 
+    switch(inputType) { 
+      case 'text': 
+        $(elem).on('keyup',handleInput);
+        break; 
+      default: 
+        $(elem).on('change',handleInput);
+        break; 
+    };
+  }; 
+
   var collectionRoutine = function(elem,opts){
     // collection routine, the function that defines the object stored in boundElems
     opts.simplebindvalue = opts.simplebindvalue.split('.'); 
     var configObj = { 
       elem: elem,
       objName: opts.simplebindvalue.shift(), 
-      objKey: opts.simplebindvalue.join('.')
+      objKey: opts.simplebindvalue.join('.'), 
+      inputType: getInputType(elem)
     }; 
-    $(elem).on('keyup',handleInput);
+    attachAppropriateEventHandlers(elem,configObj.inputType);
     pub.addToBoundElems('simplebindvalue',configObj.objName,configObj); 
   }; 
 
   var bindingRoutine = function(config,obj){
     // binding routine, the function that determines how binding is done for this bind type
     var val = util.get(obj,config.objKey);
-    if(val != config.elem.value) { 
-      config.elem.value = val;
+    // if(val != config.elem.value) { 
+    //   config.elem.value = val;
+    // }
+    switch(config.inputType) { 
+      case 'select': 
+        var opts = config.elem.getElementsByTagName('option'); 
+        var selIndex = -1; 
+        for(var i=0; i < opts.length; ++i) { 
+          if(opts[i].value == val) { 
+            selIndex = i; 
+            break; 
+          }
+        }
+        config.elem.selectedIndex = i; 
+        break; 
+      case 'radio': 
+        config.elem.checked = val == config.elem.value; 
+        break; 
+      case 'checkbox': 
+        config.elem.checked = val; 
+        break; 
+      case 'text': 
+      default: 
+        if(val != config.elem.value) { 
+          config.elem.value = val; 
+        }
+        break; 
     }
   };
 
   pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
-
-
-/* 
-var bindValue = function(boundObj,value) { 
-  if(value) { 
-    if(!boundObj.elem.getAttribute('data-simplebindvaluechangeinitiator')) { 
-      switch(boundObj.inputType) { 
-        case 'select': 
-          var opts = boundObj.elem.getElementsByTagName('option'); 
-          var selIndex = -1; 
-          for(var i=0; i < opts.length; ++i) { 
-            if(opts[i].value == value) { 
-              selIndex = i;
-              break; 
-            }
-          }
-          boundObj.elem.selectedIndex = selIndex; 
-          break; 
-        case 'radio': 
-          boundObj.elem.checked = boundObj.elem.getAttribute('value') == value;
-          break; 
-        case 'text': 
-        default: 
-          boundObj.elem.value = value;
-          break;
-      }
-    } else { 
-      boundObj.elem.removeAttribute('data-simplebindvaluechangeinitiator');  
-    }; 
-  }
-};
-*/
+})(window,document,jQuery,simpleBindUtil,simpleBind||{});

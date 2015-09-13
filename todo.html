@@ -2,22 +2,45 @@
 	<head>
 	</head>
 	<body>
-		
+
 		<h1>Todo List</h1>
 
 		<form data-simpleevent="submit:addNewItem:todo.newItem">
-			<input type="text" data-simplebindvalue="todo.newItem" />
-			<button type="submit" data-simpleevent="click:addNewItem:todo.newItem">+ Add Item</button>
+			<input type="text" data-simplebindvalue="todo.newItem.text" />
+			<select data-simplebindvalue="todo.newItem.priority">
+				<option value="low">Low</option>
+				<option value="medium">Medium</option>
+				<option value="high">High</option>
+			</select>
+			<button type="submit" data-simpleevent="click:addNewItem:todo.newItem.$base">+ Add Item</button>
 		</form>
 
 		<ul data-simplerepeat="task:todo.tasks">
 			<!-- The inside of a repeat needs to contain a single node on the base level -->
 			<li>
-				Description: <span data-simplebind="task.description"></span>
+				<button data-simpleevent="click:removeItem:task.id">remove</button>
+				<label>
+					<input type="checkbox" data-simplebindvalue="task.completed" value="true"/>
+					<span data-simplebind="task.description"></span>
+				</label>
+				<label>
+					<input type="radio" data-simplebindvalue="task.priority" value="low" /> Low
+				</label>
+				<label>
+					<input type="radio" data-simplebindvalue="task.priority" value="medium" /> Medium
+				</label>
+				<label>
+					<input type="radio" data-simplebindvalue="task.priority" value="high" /> High
+				</label>
+
 			</li>
 		</ul>
 
-		<script type="text/javascript" src="https://code.jquery.com/jquery-1.8.3.min.js"></script>
+		<div>
+			<pre data-simplebind="todo.$base"></pre>
+		</div>
+
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 		<script type="text/javascript" src="src/simpleBindUtil.js"></script>
 		<script type="text/javascript" src="src/simpleBind.2.0.js"></script>
 		<script type="text/javascript" src="src/bindTypes/simplebind.js"></script>

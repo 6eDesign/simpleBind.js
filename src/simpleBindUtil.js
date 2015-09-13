@@ -53,6 +53,7 @@ var simpleBindUtil = (function(pub){
       // if(!obj || typeof obj[str[i]] == 'undefined') {
       //   return '';
       // } else {
+        if(str[i] == '$base') return obj; 
         obj = obj[str[i]];
       // }
     }
