@@ -1,6 +1,9 @@
 simpleBind = (function(w,d,$,util,pub){
   var state = pub.getState(); 
   var changeInitiatorMarker = 'data-simplebindvaluechanger';
+  /**
+   * handleInput() is an event callback to handle changes to simplebindvalue-bound inputs
+   */
   var handleInput = function() { 
     var binding = this.getAttribute('data-simplebindvalue').split('.')
       , objName = binding.shift(); 
