@@ -10,7 +10,8 @@ simpleBind = (function(w,d,$,util,pub){
     pub.addToBoundElems('simplebind',configObj.objName,configObj); 
   },function(config,obj){
     // binding routine, the function that determines how binding is done for this bind type
-    config.elem.innerHTML = util.get(obj,config.objKey);
+    var val = util.get(obj,config.objKey); 
+    config.elem.innerHTML = typeof val == 'string' ? val : JSON.stringify(val,null,2);
   }); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{}); 

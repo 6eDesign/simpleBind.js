@@ -47,6 +47,7 @@ var simpleBindUtil = (function(pub){
   // Same as above but retrieves the value
   // instead of setting it:
   pub.get = function(obj,str) {
+    if(str == '$base') return obj; 
     str = str.split('.');
     for(var i=0; i < str.length; ++i) {
       if(!obj || typeof obj[str[i]] == 'undefined') {
