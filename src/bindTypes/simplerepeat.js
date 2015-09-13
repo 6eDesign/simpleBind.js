@@ -1,6 +1,7 @@
 simpleBind = (function(w,d,$,util,pub){
   var state = pub.getState(); 
   state.repeatCount = 0; 
+  state.repeatDictionary = { }; 
 
   var getNewBindingName = function(config,count) { 
     return '__repeat' + config.repeatIndex + '-' + config.innerObjName + count; 
@@ -76,6 +77,7 @@ simpleBind = (function(w,d,$,util,pub){
     var innerNodes = elem.getElementsByTagName('*'); 
     rewriteBindings(innerNodes,configObj.innerObjName,getNewBindingName(configObj,0)); 
     configObj.repeatTemplate = innerNodes[0].parentNode.removeChild(innerNodes[0]);
+    state.repeatDictionary['__repeat' + configObj.repeatIndex] = configObj.objName; 
     ++state.repeatCount;
     pub.addToBoundElems('simplerepeat',configObj.objName,configObj); 
   },function(config,obj){

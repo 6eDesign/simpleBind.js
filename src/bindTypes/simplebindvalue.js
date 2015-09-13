@@ -9,6 +9,10 @@ simpleBind = (function(w,d,$,util,pub){
       , objName = binding.shift(); 
     util.set(state.boundObjects[objName],binding.join('.'),this.value);     
     pub.bind(objName,state.boundObjects[objName]);
+    if(objName.indexOf('__repeat') > -1) { 
+      var originalObjName = state.repeatDictionary[objName.split('-').shift()];
+      pub.bind(originalObjName,state.boundObjects[originalObjName]);
+    }
   }; 
   pub.registerBindType('simplebindvalue',function(elem,opts){
     // collection routine, the function that defines the object stored in boundElems
