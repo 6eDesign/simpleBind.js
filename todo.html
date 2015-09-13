@@ -1,0 +1,31 @@
+<html>
+	<head>
+	</head>
+	<body>
+		
+		<h1>Todo List</h1>
+
+		<form data-simpleevent="submit:addNewItem:todo.newItem">
+			<input type="text" data-simplebindvalue="todo.newItem" />
+			<button type="submit" data-simpleevent="click:addNewItem:todo.newItem">+ Add Item</button>
+		</form>
+
+		<ul data-simplerepeat="task:todo.tasks">
+			<!-- The inside of a repeat needs to contain a single node on the base level -->
+			<li>
+				Description: <span data-simplebind="task.description"></span>
+			</li>
+		</ul>
+
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="src/simpleBindUtil.js"></script>
+		<script type="text/javascript" src="src/simpleBind.2.0.js"></script>
+		<script type="text/javascript" src="src/bindTypes/simplebind.js"></script>
+		<script type="text/javascript" src="src/bindTypes/simplebindhandler.js"></script>
+		<script type="text/javascript" src="src/bindTypes/simplebindvalue.js"></script>
+    <script type="text/javascript" src="src/bindTypes/simplerepeat.js"></script>
+    <script type="text/javascript" src="src/bindTypes/simpleevent.js"></script>
+		<script type="text/javascript" src="src/bindTypes/simpledata.js"></script>
+		<script type="text/javascript" src="test/todo.js"></script>
+	</body>
+</html>

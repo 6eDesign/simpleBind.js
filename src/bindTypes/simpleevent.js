@@ -14,15 +14,15 @@ simpleBind = (function(w,d,$,util,pub){
           , objKey = objNameAndKey.join('.'); 
       }
 
-      elem.addEventListener(eventName,function(){
+      elem.addEventListener(eventName,function(event){
         if(typeof state.eventHandlers[eventHandler] != 'undefined') { 
           if(objNameAndKey) { 
             if(typeof state.boundObjects[objName] != 'undefined') { 
-              state.eventHandlers[eventHandler].call(this,util.get(state.boundObjects[objName],objKey));
+              state.eventHandlers[eventHandler].call(this,event,util.get(state.boundObjects[objName],objKey));
               return;
             }
           }  
-          state.eventHandlers[eventHandler].call(this,undefined)
+          return state.eventHandlers[eventHandler].call(this,undefined)
         }
       }); 
     }

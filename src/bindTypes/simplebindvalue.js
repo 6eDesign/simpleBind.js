@@ -16,6 +16,17 @@ simpleBind = (function(w,d,$,util,pub){
     }
   }; 
 
+  var getInputType = function(elem) { 
+    var type, tagName = elem.tagName.toLowerCase();
+    switch(tagName) { 
+     case 'input':     
+       type = elem.getAttribute('type'); 
+       return type; 
+     default: 
+       return tagName; 
+    }
+  };
+
   var collectionRoutine = function(elem,opts){
     // collection routine, the function that defines the object stored in boundElems
     opts.simplebindvalue = opts.simplebindvalue.split('.'); 
@@ -39,3 +50,35 @@ simpleBind = (function(w,d,$,util,pub){
   pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
+
+
+/* 
+var bindValue = function(boundObj,value) { 
+  if(value) { 
+    if(!boundObj.elem.getAttribute('data-simplebindvaluechangeinitiator')) { 
+      switch(boundObj.inputType) { 
+        case 'select': 
+          var opts = boundObj.elem.getElementsByTagName('option'); 
+          var selIndex = -1; 
+          for(var i=0; i < opts.length; ++i) { 
+            if(opts[i].value == value) { 
+              selIndex = i;
+              break; 
+            }
+          }
+          boundObj.elem.selectedIndex = selIndex; 
+          break; 
+        case 'radio': 
+          boundObj.elem.checked = boundObj.elem.getAttribute('value') == value;
+          break; 
+        case 'text': 
+        default: 
+          boundObj.elem.value = value;
+          break;
+      }
+    } else { 
+      boundObj.elem.removeAttribute('data-simplebindvaluechangeinitiator');  
+    }; 
+  }
+};
+*/
