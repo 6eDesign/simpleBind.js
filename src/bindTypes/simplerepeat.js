@@ -40,7 +40,6 @@ simpleBind = (function(w,d,$,util,pub){
       // need to add elems
       var delta = num - config.repeatedElems.length
         , frag = d.createDocumentFragment(); 
-        console.log('creating another repeat elem',num,delta); 
       for(var i=0; i < delta; ++i) {
         var newNode = config.repeatTemplate.cloneNode(true)
           , innards = newNode.getElementsByTagName('*'); 

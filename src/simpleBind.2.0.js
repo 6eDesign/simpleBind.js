@@ -3,6 +3,7 @@ var simpleBind = (function(w,d,$,util,pub){
     bindTypes: [ ], 
     bindTypeOpts: { }, 
     boundElems: { }, 
+    boundObjects: { }
   }; 
 
   var init = function() { 
@@ -33,6 +34,7 @@ var simpleBind = (function(w,d,$,util,pub){
 
   var processBindings = function(objName,obj) { 
     // console.log("ProcessBindings() called for objName='" + objName + "'"); 
+    state.boundObjects[objName] = obj; 
     for(var i=0; i < state.boundElems[objName].length; ++i) { 
       state.bindTypeOpts[state.boundElems[objName][i].bindType].binding(state.boundElems[objName][i],obj); 
     }
