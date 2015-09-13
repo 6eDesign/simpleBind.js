@@ -9,6 +9,21 @@ var todoObj = {
 			description: 'make simpleBind more awesome', 
 			completed: false, 
 			priority: 'high'
+		}, { 
+			id: new Date().getTime(),
+			description: 'make simpleBind more modular', 
+			completed: false, 
+			priority: 'high'
+		}, { 
+			id: new Date().getTime(),
+			description: 'make simpleBind faster', 
+			completed: false, 
+			priority: 'high'
+		}, { 
+			id: new Date().getTime(),
+			description: 'make simpleBind smaller', 
+			completed: false, 
+			priority: 'high'
 		}
 	]
 }; 
@@ -37,8 +52,18 @@ simpleBind.registerEvent('removeItem',function(evt,todoID){
 	simpleBind.bind('todo',todoObj);
 });
 
+simpleBind.registerEvent('removeCompleted',function(evt){
+	var numRemoved = 0; 
+	for(var len = todoObj.tasks.length, i=0; i < len; ++i) { 
+		if(todoObj.tasks[i-numRemoved].completed) { 
+			todoObj.tasks.splice(i-numRemoved,1);
+			++numRemoved;
+		}
+	}
+	if(numRemoved) simpleBind.bind('todo',todoObj);
+}); 
+
 simpleBind.registerBindHandler('baseClassHandler',function(elem,completed){
-	console.log(elem,completed);
 	elem.className = completed ? 'complete' : ''; 
 }); 
 
