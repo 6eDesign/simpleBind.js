@@ -8,13 +8,15 @@ simpleBind = (function(w,d,$,util,pub){
       var eventArr = events[i].split(':') 
         , eventName = eventArr.shift()
         , eventHandler = eventArr.shift(); 
+      var objNameAndKey = eventArr.length ? eventArr.shift().split('.') : false; 
+      if(objNameAndKey) { 
+        var objName = objNameAndKey.shift()
+          , objKey = objNameAndKey.join('.'); 
+      }
 
       elem.addEventListener(eventName,function(){
         if(typeof state.eventHandlers[eventHandler] != 'undefined') { 
-          if(eventArr.length) { 
-            var objNameAndKey = eventArr.shift().split('.') 
-              , objName = objNameAndKey.shift() 
-              , objKey = objNameAndKey.join('.'); 
+          if(objNameAndKey) { 
             if(typeof state.boundObjects[objName] != 'undefined') { 
               state.eventHandlers[eventHandler].call(this,util.get(state.boundObjects[objName],objKey));
               return;
