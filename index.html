@@ -2,9 +2,9 @@
 	<head>
 	</head>
 	<body>
-		<h1 data-simplebind="example.text"></h1>	
+		<h1 data-simplebind="example.text" data-simplebindhandler="logValueBH:example.text,logValueBH:example.text"></h1>	
 		<div>
-		    <ul data-simplerepeat="item:items">
+		    <ul data-simplerepeat="item:example.arrays.items">
 		        <li>
 		            Prop 1: <button class="something" data-simplebind="item.prop1"></button>
 		        </li>
@@ -14,6 +14,8 @@
 		<script type="text/javascript" src="src/simpleBindUtil.js"></script>
 		<script type="text/javascript" src="src/simpleBind.2.0.js"></script>
 		<script type="text/javascript" src="src/bindTypes/simplebind.js"></script>
+		<script type="text/javascript" src="src/bindTypes/simplebindhandler.js"></script>
+		<script type="text/javascript" src="src/bindTypes/simplerepeat.js"></script>
 		<script type="text/javascript" src="test/test-demo.js"></script>
 	</body>
 </html>

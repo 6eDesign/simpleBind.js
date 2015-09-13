@@ -59,6 +59,10 @@ var simpleBind = (function(w,d,$,util,pub){
     state.boundElems[objName].push(configObj); 
   }; 
 
+  pub.recollectDOM = function(context) { 
+    domCollection(context);
+  }; 
+
   pub.bind = function(objName,obj) { 
     if(typeof state.boundElems[objName] != 'undefined' && typeof obj == 'object') {
       processBindings(objName,obj);
