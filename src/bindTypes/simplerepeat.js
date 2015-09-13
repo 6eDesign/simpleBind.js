@@ -43,8 +43,13 @@ simpleBind = (function(w,d,$,util,pub){
         , frag = d.createDocumentFragment(); 
       for(var i=0; i < delta; ++i) {
         var newNode = config.repeatTemplate.cloneNode(true)
-          , innards = newNode.getElementsByTagName('*'); 
-        rewriteBindings(innards,getNewBindingName(config,0),getNewBindingName(config,config.repeatedElems.length)); 
+          , innards = newNode.getElementsByTagName('*')
+          , origBind = getNewBindingName(config,0)
+          , newBind = getNewBindingName(config,config.repeatedElems.length); 
+        // rebind the base-level node: 
+        rewriteBindings([newNode],origBind,newBind);
+        // & then the children: 
+        rewriteBindings(innards,origBind,newBind); 
         config.repeatedElems.push(newNode);
         frag.appendChild(newNode);
       }

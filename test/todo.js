@@ -37,6 +37,11 @@ simpleBind.registerEvent('removeItem',function(evt,todoID){
 	simpleBind.bind('todo',todoObj);
 });
 
+simpleBind.registerBindHandler('baseClassHandler',function(elem,completed){
+	console.log(elem,completed);
+	elem.className = completed ? 'complete' : ''; 
+}); 
+
 var todo = (function(w,d,$,pub){
 	var init = function(){ 
 		simpleBind.bind('todo',todoObj); 
