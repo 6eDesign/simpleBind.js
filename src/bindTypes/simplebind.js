@@ -7,7 +7,8 @@ simpleBind = (function(w,d,$,util,pub){
     var configObj = { 
       elem: elem,
       objName: opts.simplebind.shift(), 
-      objKey: opts.simplebind.join('.')
+      objKey: opts.simplebind.join('.'), 
+      opts: opts
     }; 
     pub.addToBoundElems('simplebind',configObj.objName,configObj); 
   };
@@ -17,7 +18,12 @@ simpleBind = (function(w,d,$,util,pub){
     var val = util.get(obj,config.objKey); 
     var oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
     if(val != oldVal) { 
-      config.elem.innerHTML = typeof val == 'string' ? val : JSON.stringify(val,null,2);
+      val = typeof val == 'string' ? val : JSON.stringify(val,null,2);
+      if(typeof config['simplebindhtml'] != 'undefined' && config.simplebindhtml) { 
+        config.elem.innerHTML = val;
+      } else { 
+        config.elem.appendChild(d.createTextNode(val)); 
+      }
     }
   };
 
