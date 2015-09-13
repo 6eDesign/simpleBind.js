@@ -50,11 +50,11 @@ var simpleBindUtil = (function(pub){
     if(str == '$base') return obj; 
     str = str.split('.');
     for(var i=0; i < str.length; ++i) {
-      if(!obj || typeof obj[str[i]] == 'undefined') {
-        return '';
-      } else {
+      // if(!obj || typeof obj[str[i]] == 'undefined') {
+      //   return '';
+      // } else {
         obj = obj[str[i]];
-      }
+      // }
     }
     return obj;
   };

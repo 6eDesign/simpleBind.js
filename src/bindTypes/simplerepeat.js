@@ -84,10 +84,15 @@ simpleBind = (function(w,d,$,util,pub){
     // binding routine, the function that determines how binding is done for this bind type
     var arrToBind = util.get(obj,config.objKey) || []; 
     if(typeof arrToBind['length'] != 'undefined') { 
-      scaleRepeat(config,arrToBind.length); 
-      for(var i=0; i < arrToBind.length; ++i) { 
-        pub.bind(getNewBindingName(config,i),arrToBind[i]); 
-      }
+      // this doesn't work: 
+      // var oldVal = util.get(state.boundObjects[config.objName],config.objKey); 
+      // console.log(JSON.stringify(oldVal),'vs',JSON.stringify(arrToBind));
+      // if(JSON.stringify(oldVal) != JSON.stringify(arrToBind)) { 
+        scaleRepeat(config,arrToBind.length); 
+        for(var i=0; i < arrToBind.length; ++i) { 
+          pub.bind(getNewBindingName(config,i),arrToBind[i]); 
+        }
+      // }
     } 
   }); 
   return pub; subl
