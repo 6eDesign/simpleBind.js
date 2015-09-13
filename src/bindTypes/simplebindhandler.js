@@ -18,7 +18,11 @@ simpleBind = (function(w,d,$,util,pub){
   },function(config,obj){
     // binding routine, the function that determines how binding is done for this bind type
     if(typeof state.bindHandlers[config.handler] != 'undefined') { 
-      state.bindHandlers[config.handler](config.elem,util.get(obj,config.objKey)); 
+      var val = util.get(obj,config.objKey)
+        , oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
+      if(val != oldVal) { 
+        state.bindHandlers[config.handler](config.elem,util.get(obj,config.objKey)); 
+      }
     }
   }); 
 

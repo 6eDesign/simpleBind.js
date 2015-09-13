@@ -1,5 +1,5 @@
 simpleBind.registerBindHandler('logValueBH',function(elem,value){
-	// console.log(elem,value);
+	console.log('bind handler called for', elem);
 }); 
 var example = {
   text: 'hello world',
