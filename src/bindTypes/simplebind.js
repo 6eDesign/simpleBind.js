@@ -22,7 +22,11 @@ simpleBind = (function(w,d,$,util,pub){
       if(typeof config['simplebindhtml'] != 'undefined' && config.simplebindhtml) { 
         config.elem.innerHTML = val;
       } else { 
-        config.elem.appendChild(d.createTextNode(val)); 
+        if(config.elem.childNodes.length) { 
+          config.elem.childNodes[0].nodeValue = val; 
+        } else { 
+          config.elem.appendChild(d.createTextNode(val)); 
+        }
       }
     }
   };
