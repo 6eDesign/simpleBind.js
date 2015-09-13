@@ -30,9 +30,8 @@ simpleBind = (function(w,d,$,util,pub){
 
   var bindingRoutine = function(config,obj){
     // binding routine, the function that determines how binding is done for this bind type
-    var val = util.get(obj,config.objKey)
-      , oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey);
-    if(val != oldVal) { 
+    var val = util.get(obj,config.objKey);
+    if(val != config.elem.value) { 
       config.elem.value = val;
     }
   };

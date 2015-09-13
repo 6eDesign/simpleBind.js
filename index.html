@@ -3,13 +3,14 @@
 	</head>
 	<body>
 		<h1 data-simplebind="example.text" data-simplebindhandler="logValueBH:example.text"></h1>	
+    <button class="something" data-simplebind="example.text" data-simpleevent="click:exampleClickEvent:example.text"></button>
 		<input type="text" data-simplebindvalue="example.text" data-simpledata="someProp:example.text,someOtherProp:example.fakeProp"/>
 		<div>
 	    <ul data-simplerepeat="item:example.arrays.items">
         <li>
             <div>
             	Prop 1: 
-            	<button class="something" data-simplebind="item.prop1" data-simpleevent="click:exampleClickEvent:item.prop2"></button>
+              <button class="something" data-simplebind="item.prop1"></button>
             </div>
             <div>
               <input type="text" data-simplebindvalue="item.prop2" />
