@@ -9,10 +9,10 @@
         <li>
             <div>
             	Prop 1: 
-            	<button class="something" data-simplebind="item.prop1"></button>
+            	<button class="something" data-simplebind="item.prop1" data-simpleevent="click:exampleClickEvent:item.prop2"></button>
             </div>
             <div>
-            	<input type="text" data-simplebindvalue="item.prop2" />
+              <input type="text" data-simplebindvalue="item.prop2" />
           	</div>
             <div data-simplebind="item.prop2"></div>
         </li>
@@ -31,7 +31,8 @@
 		<script type="text/javascript" src="src/bindTypes/simplebind.js"></script>
 		<script type="text/javascript" src="src/bindTypes/simplebindhandler.js"></script>
 		<script type="text/javascript" src="src/bindTypes/simplebindvalue.js"></script>
-		<script type="text/javascript" src="src/bindTypes/simplerepeat.js"></script>
+    <script type="text/javascript" src="src/bindTypes/simplerepeat.js"></script>
+		<script type="text/javascript" src="src/bindTypes/simpleevent.js"></script>
 		<script type="text/javascript" src="test/test-demo.js"></script>
 	</body>
 </html>

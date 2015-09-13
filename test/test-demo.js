@@ -1,5 +1,8 @@
 simpleBind.registerBindHandler('logValueBH',function(elem,value){
-	console.log('bind handler called for', elem);
+	console.log('bind handler called for', arguments);
+}); 
+simpleBind.registerEvent('exampleClickEvent',function(val){
+  console.log(this,val);
 }); 
 var example = {
   text: 'hello world',
@@ -34,5 +37,8 @@ var example = {
 }; 
 
 $(document).ready(function(){
+  for(var i=0; i < 100; ++i) { 
+    example.arrays.items.push($.extend({},example.arrays.items[0]));
+  }
   simpleBind.bind('example',example);
 }); 

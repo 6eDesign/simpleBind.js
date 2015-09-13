@@ -37,7 +37,9 @@ var simpleBind = (function(w,d,$,util,pub){
     if(typeof state.boundObjectsLast[objName] == 'undefined') state.boundObjectsLast[objName] = { }; 
     state.boundObjects[objName] = obj; 
     for(var i=0; i < state.boundElems[objName].length; ++i) { 
-      state.bindTypeOpts[state.boundElems[objName][i].bindType].binding(state.boundElems[objName][i],obj); 
+      if(state.bindTypeOpts[state.boundElems[objName][i].bindType].binding) { 
+        state.bindTypeOpts[state.boundElems[objName][i].bindType].binding(state.boundElems[objName][i],obj); 
+      }
     }
     state.boundObjectsLast[objName] = $.extend({},obj);
   }; 

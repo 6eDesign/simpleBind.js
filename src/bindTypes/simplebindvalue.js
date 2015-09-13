@@ -14,7 +14,8 @@ simpleBind = (function(w,d,$,util,pub){
       pub.bind(originalObjName,state.boundObjects[originalObjName]);
     }
   }; 
-  pub.registerBindType('simplebindvalue',function(elem,opts){
+
+  var collectionRoutine = function(elem,opts){
     // collection routine, the function that defines the object stored in boundElems
     opts.simplebindvalue = opts.simplebindvalue.split('.'); 
     var configObj = { 
@@ -24,13 +25,17 @@ simpleBind = (function(w,d,$,util,pub){
     }; 
     $(elem).on('keyup',handleInput);
     pub.addToBoundElems('simplebindvalue',configObj.objName,configObj); 
-  },function(config,obj){
+  }; 
+
+  var bindingRoutine = function(config,obj){
     // binding routine, the function that determines how binding is done for this bind type
     if(config.elem.getAttribute(changeInitiatorMarker)) { 
       config.elem.removeAttribute(changeInitiatorMarker);
     } else { 
       config.elem.value = util.get(obj,config.objKey);
     }
-  }); 
+  };
+
+  pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{}); 

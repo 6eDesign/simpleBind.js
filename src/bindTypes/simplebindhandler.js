@@ -1,7 +1,8 @@
 simpleBind = (function(w,d,$,util,pub){
   var state = pub.getState();
   state.bindHandlers = { }; 
-  pub.registerBindType('simplebindhandler',function(elem,opts){
+
+  var collectionRoutine = function(elem,opts){
     // collection routine, the function that defines the object stored in boundElems
     var bindHandlers = opts.simplebindhandler.split(','); 
     for(var i=0; i < bindHandlers.length; ++i) { 
@@ -15,7 +16,9 @@ simpleBind = (function(w,d,$,util,pub){
       configObj.objKey = bindHandlers[i].join('.'); 
       pub.addToBoundElems('simplebindhandler',configObj.objName,configObj); 
     }
-  },function(config,obj){
+  }; 
+
+  var bindingRoutine = function(config,obj){
     // binding routine, the function that determines how binding is done for this bind type
     if(typeof state.bindHandlers[config.handler] != 'undefined') { 
       var val = util.get(obj,config.objKey)
@@ -24,7 +27,9 @@ simpleBind = (function(w,d,$,util,pub){
         state.bindHandlers[config.handler](config.elem,util.get(obj,config.objKey)); 
       }
     }
-  }); 
+  };
+
+  pub.registerBindType('simplebindhandler',collectionRoutine,bindingRoutine); 
 
   pub.registerBindHandler = function(handlerName,func) { 
     if(typeof func == 'function') { 

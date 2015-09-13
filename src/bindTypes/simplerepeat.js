@@ -62,7 +62,7 @@ simpleBind = (function(w,d,$,util,pub){
     }
   }; 
 
-  pub.registerBindType('simplerepeat',function(elem,opts){
+  var collectionRoutine = function(elem,opts){
     // collection routine, the function that defines the object stored in boundElems
     opts.simplerepeat = opts.simplerepeat.split(':'); 
     var objNameAndKey = opts.simplerepeat.pop().split('.');
@@ -80,7 +80,9 @@ simpleBind = (function(w,d,$,util,pub){
     state.repeatDictionary['__repeat' + configObj.repeatIndex] = configObj.objName; 
     ++state.repeatCount;
     pub.addToBoundElems('simplerepeat',configObj.objName,configObj); 
-  },function(config,obj){
+  };
+
+  var bindingRoutine = function(config,obj){
     // binding routine, the function that determines how binding is done for this bind type
     var arrToBind = util.get(obj,config.objKey) || []; 
     if(typeof arrToBind['length'] != 'undefined') { 
@@ -94,6 +96,9 @@ simpleBind = (function(w,d,$,util,pub){
         }
       // }
     } 
-  }); 
-  return pub; subl
+  }; 
+
+  pub.registerBindType('simplerepeat',collectionRoutine,bindingRoutine); 
+
+  return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
