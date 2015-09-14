@@ -22,8 +22,11 @@ simpleBind = (function(w,d,$,util,pub){
         var attr = 'data-' + state.bindTypes[j]
           , binding = elems[i].getAttribute(attr); 
         if(binding) { 
-          elems[i].removeAttribute('data-simplebindcollected');
-          elems[i].setAttribute(attr,binding.replace(originalObjName,newObjName)); 
+          var newBindingVal = state.bindTypeOpts[state.bindTypes[j]].objNameReplaceFn(binding,originalObjName,newObjName);
+          if(newBindingVal != binding) { 
+            elems[i].setAttribute(attr,newBindingVal); 
+            elems[i].removeAttribute('data-simplebindcollected');
+          } 
         }
       }
     }
@@ -91,16 +94,15 @@ simpleBind = (function(w,d,$,util,pub){
     // binding routine, the function that determines how binding is done for this bind type
     var arrToBind = util.get(obj,config.objKey) || []; 
     if(typeof arrToBind['length'] != 'undefined') { 
-      // this doesn't work: 
-      // var oldVal = util.get(state.boundObjects[config.objName],config.objKey); 
-      // console.log(JSON.stringify(oldVal),'vs',JSON.stringify(arrToBind));
-      // if(JSON.stringify(oldVal) != JSON.stringify(arrToBind)) { 
-        scaleRepeat(config,arrToBind.length); 
-        for(var i=0; i < arrToBind.length; ++i) { 
-          pub.bind(getNewBindingName(config,i),arrToBind[i]); 
-        }
-      // }
+      scaleRepeat(config,arrToBind.length); 
+      for(var i=0; i < arrToBind.length; ++i) { 
+        pub.bind(getNewBindingName(config,i),arrToBind[i]); 
+      }
     } 
+  }; 
+
+  var replaceObjName = function(binding,oldObjName,newObjName) { 
+    return binding.replace(new RegExp(':'+oldObjName),':'+newObjName); 
   }; 
 
   pub.registerBindType('simplerepeat',collectionRoutine,bindingRoutine); 

@@ -63,7 +63,7 @@ simpleBind.registerEvent('removeCompleted',function(evt){
 	if(numRemoved) simpleBind.bind('todo',todoObj);
 }); 
 
-simpleBind.registerBindHandler('baseClassHandler',function(elem,completed){
+simpleBind.registerBindHandler('completedHandler',function(elem,completed){
 	elem.className = completed ? 'complete' : ''; 
 }); 
 

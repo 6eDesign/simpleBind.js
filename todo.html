@@ -21,7 +21,7 @@
 		</form>
 
 		<ul data-simplerepeat="task:todo.tasks">
-			<li data-simplebindhandler="baseClassHandler:task.completed"> <!-- The inside of a repeat needs to contain a single node on the base level like this. -->
+			<li data-simplebindhandler="completedHandler:task.completed"> <!-- The inside of a repeat needs to contain a single node on the base level like this. -->
 				<button data-simpleevent="click:removeItem:task.id">remove</button>
 				<label>
 					<input type="checkbox" data-simplebindvalue="task.completed" value="true"/>

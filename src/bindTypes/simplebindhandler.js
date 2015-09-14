@@ -29,7 +29,19 @@ simpleBind = (function(w,d,$,util,pub){
     }
   };
 
-  pub.registerBindType('simplebindhandler',collectionRoutine,bindingRoutine); 
+  // var objNameReplaceRe = new RegExp(/^[^\.]*/);
+  // ex: replaceObjName('bindHandlerName:someObjName.key1','someObjName','newObjName') 
+  //        => 'bindHandlerNamenewObjName.key1.key2'
+  // 
+  // bindhandlers can be comma-separated, ie: 'handler:obj.key,handler1:obj.key2'
+  // ex: replaceObjName('handler:obj.key,handler1:obj2.key2','obj','newObj')
+  //        => 'handler:newObj.key,handler1:obj2.key2'
+  //        
+  var replaceObjName = function(binding,oldObjName,newObjName) { 
+    return binding.replace(new RegExp(':'+oldObjName+'\\.','g'),':'+newObjName+'.'); 
+  }; 
+
+  pub.registerBindType('simplebindhandler',collectionRoutine,bindingRoutine,replaceObjName); 
 
   pub.registerBindHandler = function(handlerName,func) { 
     if(typeof func == 'function') { 

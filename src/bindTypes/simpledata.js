@@ -25,6 +25,11 @@ simpleBind = (function(w,d,$,util,pub){
     config.elem.setAttribute(prop, util.get(obj,config.objKey));
   };
 
-  pub.registerBindType('simpledata',collectionRoutine,bindingRoutine); 
+  // ex: replaceObjName('thisProp:objName.objKey,otherProp:objName2.objKey','objName2','newObj')
+  var replaceObjName = function(binding,oldObjName,newObjName) { 
+    return binding.replace(new RegExp(':'+oldObjName+'\\.','g'),':'+newObjName+'.'); 
+  }; 
+
+  pub.registerBindType('simpledata',collectionRoutine,bindingRoutine,replaceObjName); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{}); 

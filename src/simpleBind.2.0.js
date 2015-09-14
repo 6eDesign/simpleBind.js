@@ -50,13 +50,14 @@ var simpleBind = (function(w,d,$,util,pub){
     return state;
   }; 
 
-  pub.registerBindType = function(selector,collectionRoutine,bindingRoutine) { 
+  pub.registerBindType = function(selector,collectionRoutine,bindingRoutine,objNameReplaceFn) { 
     if(typeof state.bindTypeOpts[selector] == 'undefined') { 
       state.bindTypeOpts[selector] = { }; 
       state.bindTypes.push(selector); 
     }
     state.bindTypeOpts[selector].collection = collectionRoutine; 
     state.bindTypeOpts[selector].binding = bindingRoutine; 
+    state.bindTypeOpts[selector].objNameReplaceFn = objNameReplaceFn;
   }; 
 
   pub.addToBoundElems = function(bindType,objName,configObj) { 

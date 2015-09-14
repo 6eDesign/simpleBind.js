@@ -31,6 +31,15 @@ simpleBind = (function(w,d,$,util,pub){
     }
   };
 
-  pub.registerBindType('simplebind',collectionRoutine,bindingRoutine); 
+  var objNameReplaceRe = new RegExp(/^[^\.]*/);
+  // ex: replaceObjName('someObjName.key1.key2','someObjName','newObjName') => 'newObjName.key1.key2'
+  var replaceObjName = function(binding,oldObjName,newObjName) { 
+    if(binding.indexOf(oldObjName+'.') == 0) { 
+      binding = binding.replace(objNameReplaceRe,newObjName); 
+    }
+    return binding;
+  }; 
+
+  pub.registerBindType('simplebind',collectionRoutine,bindingRoutine,replaceObjName); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
