@@ -16,7 +16,7 @@ var simpleBindUtil = (function(pub){
     attrs = pub.getAttrs(elem);
     keys = pub.getKeys(attrs);
     for(var i=0; i < keys.length; ++i) {
-      if(keys[i].indexOf('data-') == 0) {
+      if(keys[i].indexOf('data-') === 0) {
         data[keys[i].substring(5,keys[i].length)] = attrs[keys[i]];
       }
     }
@@ -47,7 +47,7 @@ var simpleBindUtil = (function(pub){
   // Same as above but retrieves the value
   // instead of setting it:
   pub.get = function(obj,str) {
-    if(str == '$base') return obj; 
+    if(str == '$base' || str == '') return obj; 
     str = str.split('.');
     for(var i=0; i < str.length; ++i) {
       // if(!obj || typeof obj[str[i]] == 'undefined') {
@@ -68,11 +68,19 @@ var simpleBind = (function(w,d,$,util,pub){
     bindTypeOpts: { }, 
     boundElems: { }, 
     boundObjects: { }, 
-    boundObjectsLast: { }
+    boundObjectsLast: { }, 
+    ready: false,
+    beforeReadyBindQueue: [ ]
   }; 
 
   var init = function() { 
     domCollection();
+    state.ready = true; 
+    if(state.beforeReadyBindQueue.length) { 
+      for(var i=0; i < state.beforeReadyBindQueue.length; ++i) { 
+        pub.bind(state.beforeReadyBindQueue[i].name,state.beforeReadyBindQueue[i].obj);
+      }
+    }
   }; 
 
   var domCollection = function(base) { 
@@ -135,8 +143,13 @@ var simpleBind = (function(w,d,$,util,pub){
   }; 
 
   pub.bind = function(objName,obj) { 
-    if(typeof state.boundElems[objName] != 'undefined' && typeof obj == 'object') {
-      processBindings(objName,obj);
+    if(typeof objName == 'string' && typeof obj == 'object') {
+      if(typeof state.boundElems[objName] == 'undefined') state.boundElems[objName] = [];
+      if(state.ready) { 
+        processBindings(objName,obj);
+      } else { 
+        state.beforeReadyBindQueue.push({name: objName, obj: obj});
+      }
     }
   }; 
 
@@ -163,7 +176,7 @@ simpleBind = (function(w,d,$,util,pub){
     var oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
     if(val != oldVal) { 
       if(typeof config.opts['simplefilter'] != 'undefined') { 
-        val = pub.getFilteredValue(val,config.opts.simplefilter)
+        val = pub.getFilteredValue(val,config.opts.simplefilter);
       }
       val = typeof val == 'string' ? val : JSON.stringify(val,null,2);
       if(typeof config.opts['simplebindhtml'] != 'undefined' && config.opts.simplebindhtml=="true") { 
@@ -181,7 +194,7 @@ simpleBind = (function(w,d,$,util,pub){
   var objNameReplaceRe = new RegExp(/^[^\.]*/);
   // ex: replaceObjName('someObjName.key1.key2','someObjName','newObjName') => 'newObjName.key1.key2'
   var replaceObjName = function(binding,oldObjName,newObjName) { 
-    if(binding.indexOf(oldObjName+'.') == 0) { 
+    if(binding.indexOf(oldObjName+'.') === 0) { 
       binding = binding.replace(objNameReplaceRe,newObjName); 
     }
     return binding;
@@ -202,7 +215,7 @@ simpleBind = (function(w,d,$,util,pub){
       var configObj = { 
         elem: elem,
         handler: bindHandlers[i].shift() 
-      }
+      };
       bindHandlers[i] = bindHandlers[i].shift().split('.'); 
       configObj.objName = bindHandlers[i].shift(); 
       configObj.objKey = bindHandlers[i].join('.'); 
@@ -280,7 +293,7 @@ simpleBind = (function(w,d,$,util,pub){
       case 'type': 
       default: 
         return elem.value; 
-    }; 
+    } 
   }; 
 
   var attachAppropriateEventHandlers = function(elem,inputType) { 
@@ -291,7 +304,7 @@ simpleBind = (function(w,d,$,util,pub){
       default: 
         $(elem).on('change',handleInput);
         break; 
-    };
+    }
   }; 
 
   var collectionRoutine = function(elem,opts){
@@ -343,7 +356,7 @@ simpleBind = (function(w,d,$,util,pub){
   var objNameReplaceRe = new RegExp(/^[^\.]*/);
   // ex: replaceObjName('someObjName.key1.key2','someObjName','newObjName') => 'newObjName.key1.key2'
   var replaceObjName = function(binding,oldObjName,newObjName) { 
-    if(binding.indexOf(oldObjName+'.') == 0) { 
+    if(binding.indexOf(oldObjName+'.') === 0) { 
       binding = binding.replace(objNameReplaceRe,newObjName); 
     }
     return binding;
@@ -371,7 +384,7 @@ simpleBind = (function(w,d,$,util,pub){
    */
   var rewriteBindings = function(elems,originalObjName,newObjName) { 
     for(var i=0; i < elems.length; ++i) { 
-      var eligibleAttrs = [].concat(state.bindTypes)
+      var eligibleAttrs = [].concat(state.bindTypes);
       for(var j=0; j < state.bindTypes.length; ++j) { 
         var attr = 'data-' + state.bindTypes[j]
           , binding = elems[i].getAttribute(attr); 
@@ -394,10 +407,11 @@ simpleBind = (function(w,d,$,util,pub){
    */
   var scaleRepeat = function(config,num) { 
     if(config.repeatedElems.length == num) return; 
+    var delta;
     if(config.repeatedElems.length < num) { 
       // need to add elems
-      var delta = num - config.repeatedElems.length
-        , frag = d.createDocumentFragment(); 
+      delta = num - config.repeatedElems.length;
+      var frag = d.createDocumentFragment(); 
       for(var i=0; i < delta; ++i) {
         var newNode = config.repeatTemplate.cloneNode(true)
           , innards = newNode.getElementsByTagName('*')
@@ -414,7 +428,7 @@ simpleBind = (function(w,d,$,util,pub){
       pub.recollectDOM(config.elem);
     } else { 
       // need to remove elems
-      var delta = config.repeatedElems.length - num; 
+      delta = config.repeatedElems.length - num; 
       for(var i=0; i < delta; ++i) { 
         var removed = config.repeatedElems.pop(); 
         var objName  = getNewBindingName(config,config.repeatedElems.length);

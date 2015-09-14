@@ -10,7 +10,7 @@ simpleBind = (function(w,d,$,util,pub){
       var configObj = { 
         elem: elem,
         handler: bindHandlers[i].shift() 
-      }
+      };
       bindHandlers[i] = bindHandlers[i].shift().split('.'); 
       configObj.objName = bindHandlers[i].shift(); 
       configObj.objKey = bindHandlers[i].join('.'); 

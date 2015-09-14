@@ -46,5 +46,37 @@ There are numerous binding types available and you can also extend **simpleBind.
 ```
 
 ### simplebindvalue (data-simplebindvalue=objName.objKey)
-**simplebindvalue** is just like the **simplebind** binding type except for it is designed for inputs (text, textarea, select, radio, & checkbox).  The binding with **simplebindvalue** is bi-directional and changes made to these inputs will be reflected automatically and immediately in the bound object and in the DOM if other elements are bound to the changed object key.  
+**simplebindvalue** is just like the **simplebind** binding type except for it is designed for inputs (text, textarea, select, radio, & checkbox).  The binding with **simplebindvalue** is bi-directional and changes made to these inputs will be reflected automatically and immediately in the bound object and in the DOM if other elements are bound to the changed object key.
 
+#### text input example: 
+```
+	<!-- Basic Input -->
+	<input type="text" data-simplebindvalue="example.nestedObject.someKey" />
+```
+
+### select input example: 
+**note:** the binding on a select will only work if the bound value is equal to the value of one of the select's options (otherwise selectedIndex will be set to -1).  In other words: **simpleBind.js** will not create new options for you (but if you want to extend this bind type to do so, then we'll talk more about that later in this README).
+```
+	<!-- Select -->
+	<select data-simplebindvalue="example.someProp">
+		<option value="0">Option 0 Selected</option>
+		<option value="1">Option 1 Selected</option>
+		<option value="2">Option 2 Selected</option>
+		<option value="3">Option 3 Selected</option>
+	</select>
+```
+```
+	simpleBind.bind('example',{someProp: 2});
+```
+
+### radio input example: 
+**note:** like select binding, radio binding will not create new radio options for you.  
+```
+	<!-- Radio -->
+	<label><input type="radio" data-simplebindvalue="example.someProp" value="0" />Option 0</label>
+	<label><input type="radio" data-simplebindvalue="example.someProp" value="1" />Option 1</label>
+	<label><input type="radio" data-simplebindvalue="example.someProp" value="2" />Option 2</label>
+```
+```
+	simpleBind.bind('example',{someProp: 2});
+```

@@ -17,7 +17,7 @@ simpleBind = (function(w,d,$,util,pub){
    */
   var rewriteBindings = function(elems,originalObjName,newObjName) { 
     for(var i=0; i < elems.length; ++i) { 
-      var eligibleAttrs = [].concat(state.bindTypes)
+      var eligibleAttrs = [].concat(state.bindTypes);
       for(var j=0; j < state.bindTypes.length; ++j) { 
         var attr = 'data-' + state.bindTypes[j]
           , binding = elems[i].getAttribute(attr); 
@@ -40,10 +40,11 @@ simpleBind = (function(w,d,$,util,pub){
    */
   var scaleRepeat = function(config,num) { 
     if(config.repeatedElems.length == num) return; 
+    var delta;
     if(config.repeatedElems.length < num) { 
       // need to add elems
-      var delta = num - config.repeatedElems.length
-        , frag = d.createDocumentFragment(); 
+      delta = num - config.repeatedElems.length;
+      var frag = d.createDocumentFragment(); 
       for(var i=0; i < delta; ++i) {
         var newNode = config.repeatTemplate.cloneNode(true)
           , innards = newNode.getElementsByTagName('*')
@@ -60,7 +61,7 @@ simpleBind = (function(w,d,$,util,pub){
       pub.recollectDOM(config.elem);
     } else { 
       // need to remove elems
-      var delta = config.repeatedElems.length - num; 
+      delta = config.repeatedElems.length - num; 
       for(var i=0; i < delta; ++i) { 
         var removed = config.repeatedElems.pop(); 
         var objName  = getNewBindingName(config,config.repeatedElems.length);

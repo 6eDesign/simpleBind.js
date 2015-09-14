@@ -19,7 +19,7 @@ simpleBind = (function(w,d,$,util,pub){
     var oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
     if(val != oldVal) { 
       if(typeof config.opts['simplefilter'] != 'undefined') { 
-        val = pub.getFilteredValue(val,config.opts.simplefilter)
+        val = pub.getFilteredValue(val,config.opts.simplefilter);
       }
       val = typeof val == 'string' ? val : JSON.stringify(val,null,2);
       if(typeof config.opts['simplebindhtml'] != 'undefined' && config.opts.simplebindhtml=="true") { 
@@ -37,7 +37,7 @@ simpleBind = (function(w,d,$,util,pub){
   var objNameReplaceRe = new RegExp(/^[^\.]*/);
   // ex: replaceObjName('someObjName.key1.key2','someObjName','newObjName') => 'newObjName.key1.key2'
   var replaceObjName = function(binding,oldObjName,newObjName) { 
-    if(binding.indexOf(oldObjName+'.') == 0) { 
+    if(binding.indexOf(oldObjName+'.') === 0) { 
       binding = binding.replace(objNameReplaceRe,newObjName); 
     }
     return binding;

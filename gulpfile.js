@@ -16,10 +16,14 @@ var simpleBindFileArray = [
   'src/bindAugmenters/filters.js'
 ]; 
 
+var jsHintOpts = { 
+  laxComma: true
+}
+
 // Lint JS
 gulp.task('lint', function() {
   return gulp.src(simpleBindFileArray)
-    .pipe(jshint())
+    .pipe(jshint(jsHintOpts))
     .pipe(jshint.reporter('default'));
 });
 

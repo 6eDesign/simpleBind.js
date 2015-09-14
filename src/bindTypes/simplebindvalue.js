@@ -35,7 +35,7 @@ simpleBind = (function(w,d,$,util,pub){
       case 'type': 
       default: 
         return elem.value; 
-    }; 
+    } 
   }; 
 
   var attachAppropriateEventHandlers = function(elem,inputType) { 
@@ -46,7 +46,7 @@ simpleBind = (function(w,d,$,util,pub){
       default: 
         $(elem).on('change',handleInput);
         break; 
-    };
+    }
   }; 
 
   var collectionRoutine = function(elem,opts){
@@ -98,7 +98,7 @@ simpleBind = (function(w,d,$,util,pub){
   var objNameReplaceRe = new RegExp(/^[^\.]*/);
   // ex: replaceObjName('someObjName.key1.key2','someObjName','newObjName') => 'newObjName.key1.key2'
   var replaceObjName = function(binding,oldObjName,newObjName) { 
-    if(binding.indexOf(oldObjName+'.') == 0) { 
+    if(binding.indexOf(oldObjName+'.') === 0) { 
       binding = binding.replace(objNameReplaceRe,newObjName); 
     }
     return binding;

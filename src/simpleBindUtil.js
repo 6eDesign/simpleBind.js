@@ -16,7 +16,7 @@ var simpleBindUtil = (function(pub){
     attrs = pub.getAttrs(elem);
     keys = pub.getKeys(attrs);
     for(var i=0; i < keys.length; ++i) {
-      if(keys[i].indexOf('data-') == 0) {
+      if(keys[i].indexOf('data-') === 0) {
         data[keys[i].substring(5,keys[i].length)] = attrs[keys[i]];
       }
     }
@@ -47,7 +47,7 @@ var simpleBindUtil = (function(pub){
   // Same as above but retrieves the value
   // instead of setting it:
   pub.get = function(obj,str) {
-    if(str == '$base') return obj; 
+    if(str == '$base' || str == '') return obj; 
     str = str.split('.');
     for(var i=0; i < str.length; ++i) {
       // if(!obj || typeof obj[str[i]] == 'undefined') {

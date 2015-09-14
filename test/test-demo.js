@@ -36,9 +36,26 @@ var example = {
   }
 }; 
 
+var arrayExample = [ 
+  { 
+    count: 0, 
+    value: 'count 0 value'
+  }, { 
+    count: 1, 
+    value: 'count 1 value'
+  }, { 
+    count: 2, 
+    value: 'count 2 value'
+  }, { 
+    count: 3, 
+    value: 'count 3 value'
+  }
+]; 
+
 $(document).ready(function(){
   for(var i=0; i < 100; ++i) { 
     example.arrays.items.push($.extend({},example.arrays.items[0]));
   }
   simpleBind.bind('example',example);
+  simpleBind.bind('arrayObject',arrayExample);
 }); 

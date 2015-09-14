@@ -4,11 +4,19 @@ var simpleBind = (function(w,d,$,util,pub){
     bindTypeOpts: { }, 
     boundElems: { }, 
     boundObjects: { }, 
-    boundObjectsLast: { }
+    boundObjectsLast: { }, 
+    ready: false,
+    beforeReadyBindQueue: [ ]
   }; 
 
   var init = function() { 
     domCollection();
+    state.ready = true; 
+    if(state.beforeReadyBindQueue.length) { 
+      for(var i=0; i < state.beforeReadyBindQueue.length; ++i) { 
+        pub.bind(state.beforeReadyBindQueue[i].name,state.beforeReadyBindQueue[i].obj);
+      }
+    }
   }; 
 
   var domCollection = function(base) { 
@@ -71,8 +79,13 @@ var simpleBind = (function(w,d,$,util,pub){
   }; 
 
   pub.bind = function(objName,obj) { 
-    if(typeof state.boundElems[objName] != 'undefined' && typeof obj == 'object') {
-      processBindings(objName,obj);
+    if(typeof objName == 'string' && typeof obj == 'object') {
+      if(typeof state.boundElems[objName] == 'undefined') state.boundElems[objName] = [];
+      if(state.ready) { 
+        processBindings(objName,obj);
+      } else { 
+        state.beforeReadyBindQueue.push({name: objName, obj: obj});
+      }
     }
   }; 
 
