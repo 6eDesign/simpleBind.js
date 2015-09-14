@@ -18,6 +18,9 @@ simpleBind = (function(w,d,$,util,pub){
     var val = util.get(obj,config.objKey); 
     var oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
     if(val != oldVal) { 
+      if(typeof config.opts['simplefilter'] != 'undefined') { 
+        val = pub.getFilteredValue(val,config.opts.simplefilter)
+      }
       val = typeof val == 'string' ? val : JSON.stringify(val,null,2);
       if(typeof config.opts['simplebindhtml'] != 'undefined' && config.opts.simplebindhtml=="true") { 
         config.elem.innerHTML = val;

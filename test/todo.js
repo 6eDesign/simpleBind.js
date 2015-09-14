@@ -12,7 +12,7 @@ var todoObj = {
 		}, { 
 			id: new Date().getTime(),
 			description: 'make simpleBind more modular', 
-			completed: false, 
+			completed: true, 
 			priority: 'high'
 		}, { 
 			id: new Date().getTime(),
@@ -63,7 +63,7 @@ simpleBind.registerEvent('removeCompleted',function(evt){
 	if(numRemoved) simpleBind.bind('todo',todoObj);
 }); 
 
-simpleBind.registerBindHandler('completedHandler',function(elem,completed){
+simpleBind.registerBindHandler('taskCompletedHandler',function(elem,completed){
 	elem.className = completed ? 'complete' : ''; 
 }); 
 
