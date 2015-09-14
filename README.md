@@ -20,11 +20,17 @@ A simple, modular, small, optimized, and seo-friendly binding library.
 2. JavaScript
 
 ```
-document.addEventListener("DOMContentLoaded",function(){
-	simpleBind.bind('basicExample',{text: 'Welcome to SimpleBind.js'}); 
-}); 
+	document.addEventListener("DOMContentLoaded",function(){
+		simpleBind.bind('basicExample',{text: 'Welcome to SimpleBind.js'}); 
+	}); 
 ```
 
-3. ???
+3. Result
 
-4. Profit.
+```
+	<h1 data-simplebind="basicExample.text">Welcome to SimpleBind.js</h1>
+```
+
+### Binding Types
+There are numerous binding types available and you can also extend **simpleBind.js** to support new binding types.  The base binding types are explained below: 
+
