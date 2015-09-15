@@ -36,7 +36,8 @@ While that is useful, that is just the most basic type of binding available in *
 ### Binding Types
 There are numerous binding types available and you can also extend **simpleBind.js** to support new binding types.  The base binding types are explained below: 
 
-#### simplebind (data-simplebind=objName.objKey)
+#### simplebind 
+##### **(data-simplebind=objName.objKey)**
 **simplebind** is the base binding type used by **simpleBind.js**.  The default behavior for this bind type is to create and update text nodes in the DOM.  If you would like to use this method to bind the innerHTML of a node, you can enable by setting data-simplebindhtml="true" on the bound element. 
 
 ##### example: 
@@ -49,7 +50,8 @@ There are numerous binding types available and you can also extend **simpleBind.
 
 ####
 
-#### simplebindvalue (data-simplebindvalue=objName.objKey)
+#### simplebindvalue 
+##### **(data-simplebindvalue=objName.objKey)**
 **simplebindvalue** is just like the **simplebind** binding type except for it is designed for inputs (text, textarea, select, radio, & checkbox).  The binding with **simplebindvalue** is bi-directional and changes made to these inputs will be reflected automatically and immediately in the bound object and in the DOM if other elements are bound to the changed object key.
 
 ##### text input example: 
