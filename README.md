@@ -48,7 +48,25 @@ There are numerous binding types available and you can also extend **simpleBind.
 	<h1 data-simplebind="example.html" data-simplebindhtml="true"></h1>
 ```
 
-####
+#### simplebind 
+###### **(data-simplerepeat=innerName:objName.objKey)**
+**simplerepeat** blocks must have a single child node.  This child node can have as many nested children as you would like but it should have no siblings, for example, this is OK: 
+```
+	<ul data-simplerepeat="item:example.itemsArray"> <!-- has only one child -->
+		<li>
+			<div>
+				<span data-simplebind="item.someProperty"></span>
+			</div>
+		</li>
+	</ul>
+```
+but this will not work: 
+```
+	<div data-simplerepeat="item:example.itemsArray">
+		
+	</div>
+```
+
 
 #### simplebindvalue 
 ###### **(data-simplebindvalue=objName.objKey)**
