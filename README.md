@@ -58,7 +58,7 @@ There are numerous binding types available and you can also extend **simpleBind.
 	<input type="text" data-simplebindvalue="example.nestedObject.someKey" />
 ```
 
-#### select input example: 
+##### select input example: 
 **note:** the binding on a select will only work if the bound value is equal to the value of one of the select's options (otherwise selectedIndex will be set to -1).  In other words: **simpleBind.js** will not create new options for you (but if you want to extend this bind type to do so, then we'll talk more about that later in this README).
 ```
 	<!-- Select -->
