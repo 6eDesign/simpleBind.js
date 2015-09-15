@@ -31,6 +31,8 @@ A simple, modular, small, and optimized data-binding library.
 	<h1 data-simplebind="basicExample.text">Welcome to SimpleBind.js</h1>
 ```
 
+While that is useful, that is just the most basic type of binding available in **simpleBind.js**.  You can also bind arrays and create "simplerepeat's", bind objects to inputs for bidirectional data-binding, map JSON attributes to DOM node attributes or data properties, and much more.  We've also included a simple event system to simplify working with bound object events and to more easily access important object values from event callbacks.  
+
 ### Binding Types
 There are numerous binding types available and you can also extend **simpleBind.js** to support new binding types.  The base binding types are explained below: 
 
