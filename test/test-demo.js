@@ -39,25 +39,23 @@ var example = {
 var arrayExample = [ 
   { 
     count: 0, 
-    value: 'count 0 value'
+    value: 'count 0'
   }, { 
     count: 1, 
-    value: 'count 1 value'
+    value: 'count 1'
   }, { 
     count: 2, 
-    value: 'count 2 value'
+    value: 'count 2'
   }, { 
     count: 3, 
-    value: 'count 3 value'
+    value: 'count 3'
   }
 ]; 
 
 $(document).ready(function(){
-  for(var i=0; i < 100; ++i) { 
-    example.arrays.items.push($.extend({},example.arrays.items[0]));
-  }
+  // for(var i=0; i < 100; ++i) { 
+  //   example.arrays.items.push($.extend({},example.arrays.items[0]));
+  // }
   simpleBind.bind('example',example);
-  window.setTimeout(function(){
-    simpleBind.bind('arrayObject',arrayExample);
-  },500);
+  simpleBind.bind('arrayObject',arrayExample);
 }); 

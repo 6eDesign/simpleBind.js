@@ -62,12 +62,9 @@ simpleBind = (function(w,d,$,util,pub){
     pub.addToBoundElems('simplebindvalue',configObj.objName,configObj); 
   }; 
 
-  var bindingRoutine = function(config,obj){
+  var bindingRoutine = function(config,obj,flush){
     // binding routine, the function that determines how binding is done for this bind type
     var val = util.get(obj,config.objKey);
-    // if(val != config.elem.value) { 
-    //   config.elem.value = val;
-    // }
     switch(config.inputType) { 
       case 'select': 
         var opts = config.elem.getElementsByTagName('option'); 
@@ -88,22 +85,13 @@ simpleBind = (function(w,d,$,util,pub){
         break; 
       case 'text': 
       default: 
-        if(val != config.elem.value) { 
+        if(val != config.elem.value || flush) { 
           config.elem.value = val; 
         }
         break; 
     }
   };
 
-  var objNameReplaceRe = new RegExp(/^[^\.]*/);
-  // ex: replaceObjName('someObjName.key1.key2','someObjName','newObjName') => 'newObjName.key1.key2'
-  var replaceObjName = function(binding,oldObjName,newObjName) { 
-    if(binding.indexOf(oldObjName+'.') === 0) { 
-      binding = binding.replace(objNameReplaceRe,newObjName); 
-    }
-    return binding;
-  }; 
-
-  pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine,replaceObjName); 
+  pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{});

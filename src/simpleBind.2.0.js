@@ -6,7 +6,9 @@ var simpleBind = (function(w,d,$,util,pub){
     boundObjects: { }, 
     boundObjectsLast: { }, 
     ready: false,
-    beforeReadyBindQueue: [ ]
+    beforeReadyBindQueue: [ ], 
+    autoReBinding: false, 
+    autoReBindingQueue: { }
   }; 
 
   var init = function() { 
@@ -19,7 +21,12 @@ var simpleBind = (function(w,d,$,util,pub){
     }
   }; 
 
-  var domCollection = function(base) { 
+  var domCollection = function(base,autoReBind) { 
+    autoReBind = (typeof autoReBind == 'undefined') ? false : autoReBind; 
+    if(autoReBind) { 
+      state.autoReBinding = true; 
+      state.autoReBindingQueue = { }; 
+    } 
     base = (typeof base == 'undefined') ? d : base;
     var all = base.getElementsByTagName('*');
     for(var i=0; i < all.length; ++i) {
@@ -28,7 +35,6 @@ var simpleBind = (function(w,d,$,util,pub){
         var foundBinding = false; 
         for(var j=0; j < state.bindTypes.length; ++j) { 
           if(typeof opts[state.bindTypes[j]] != 'undefined') { 
-            // console.log("FOUND ELEMENT of bindType '" + state.bindTypes[j] + "'",all[i]); 
             if(!foundBinding) { 
               foundBinding = true;  
               all[i].setAttribute('data-simplebindcollected','true'); 
@@ -39,16 +45,34 @@ var simpleBind = (function(w,d,$,util,pub){
         }
       }
     }
+    if(autoReBind) { 
+      state.autoReBinding = false; 
+      processAutoRebindingQueue(); 
+    } 
+  }; 
+
+  var processBoundElems = function(elems,obj,flush) { 
+    flush = typeof flush == 'undefined' ? false : flush;
+    for(var i=0; i < elems.length; ++i) { 
+      if(state.bindTypeOpts[elems[i].bindType].binding) { 
+        state.bindTypeOpts[elems[i].bindType].binding(elems[i],obj,flush); 
+      }
+    }
+  }; 
+
+  var processAutoRebindingQueue = function() { 
+    for(var key in state.autoReBindingQueue) { 
+      if(typeof state.boundObjects[key] != 'undefined') { 
+        processBoundElems(state.autoReBindingQueue[key],state.boundObjects[key],true);
+      }
+    }
   }; 
 
   var processBindings = function(objName,obj) { 
     if(typeof state.boundObjectsLast[objName] == 'undefined') state.boundObjectsLast[objName] = { }; 
     state.boundObjects[objName] = obj; 
-    for(var i=0; i < state.boundElems[objName].length; ++i) { 
-      if(state.bindTypeOpts[state.boundElems[objName][i].bindType].binding) { 
-        state.bindTypeOpts[state.boundElems[objName][i].bindType].binding(state.boundElems[objName][i],obj); 
-      }
-    }
+    processBoundElems(state.boundElems[objName],obj); 
+    
     state.boundObjectsLast[objName] = $.extend({},obj);
   }; 
 
@@ -69,13 +93,17 @@ var simpleBind = (function(w,d,$,util,pub){
   }; 
 
   pub.addToBoundElems = function(bindType,objName,configObj) { 
-    if(typeof state.boundElems[objName] == 'undefined') state.boundElems[objName] = []; 
     configObj.bindType = bindType; 
+    if(typeof state.boundElems[objName] == 'undefined') state.boundElems[objName] = []; 
+    if(state.autoReBinding) { 
+      if(typeof state.autoReBindingQueue[objName] == 'undefined') state.autoReBindingQueue[objName] = []; 
+      state.autoReBindingQueue[objName].push(configObj);      
+    }
     state.boundElems[objName].push(configObj); 
   }; 
 
-  pub.recollectDOM = function(context) { 
-    domCollection(context);
+  pub.recollectDOM = function(context,autoReBind) { 
+    domCollection(context,autoReBind);
   }; 
 
   pub.bind = function(objName,obj) { 

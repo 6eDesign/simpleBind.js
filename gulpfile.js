@@ -39,7 +39,7 @@ gulp.task('minify', function(){
 
 // Watch Our Files
 gulp.task('watch', function() {
-  gulp.watch('src/*.js', ['lint', 'minify']);
+  gulp.watch(simpleBindFileArray, ['lint', 'minify']);
 });
 
 // Default

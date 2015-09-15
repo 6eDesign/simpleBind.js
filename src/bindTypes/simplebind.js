@@ -13,11 +13,12 @@ simpleBind = (function(w,d,$,util,pub){
     pub.addToBoundElems('simplebind',configObj.objName,configObj); 
   };
 
-  var bindingRoutine = function(config,obj){
+  var bindingRoutine = function(config,obj,flush){
+    if(flush) console.log('flush',flush);
     // binding routine, the function that determines how binding is done for this bind type
     var val = util.get(obj,config.objKey); 
     var oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
-    if(val != oldVal) { 
+    if(val !== oldVal || flush) { 
       if(typeof config.opts['simplefilter'] != 'undefined') { 
         val = pub.getFilteredValue(val,config.opts.simplefilter);
       }
@@ -33,16 +34,6 @@ simpleBind = (function(w,d,$,util,pub){
       }
     }
   };
-
-  var objNameReplaceRe = new RegExp(/^[^\.]*/);
-  // ex: replaceObjName('someObjName.key1.key2','someObjName','newObjName') => 'newObjName.key1.key2'
-  var replaceObjName = function(binding,oldObjName,newObjName) { 
-    if(binding.indexOf(oldObjName+'.') === 0) { 
-      binding = binding.replace(objNameReplaceRe,newObjName); 
-    }
-    return binding;
-  }; 
-
-  pub.registerBindType('simplebind',collectionRoutine,bindingRoutine,replaceObjName); 
+  pub.registerBindType('simplebind',collectionRoutine,bindingRoutine); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{}); 

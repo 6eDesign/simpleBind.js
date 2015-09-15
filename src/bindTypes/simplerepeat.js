@@ -17,20 +17,22 @@ simpleBind = (function(w,d,$,util,pub){
    */
   var rewriteBindings = function(elems,originalObjName,newObjName) { 
     for(var i=0; i < elems.length; ++i) { 
-      var eligibleAttrs = [].concat(state.bindTypes);
       for(var j=0; j < state.bindTypes.length; ++j) { 
         var attr = 'data-' + state.bindTypes[j]
           , binding = elems[i].getAttribute(attr); 
         if(binding) { 
-          var newBindingVal = state.bindTypeOpts[state.bindTypes[j]].objNameReplaceFn(binding,originalObjName,newObjName);
+          // var newBindingVal = state.bindTypeOpts[state.bindTypes[j]].objNameReplaceFn(binding,originalObjName,newObjName);
+          // var newBindingVal = state.bindTypeOpts[state.bindTypes[j]].objNameReplaceFn(binding,originalObjName,newObjName);
+          var newBindingVal = util.replaceObjNameInBindingStr(binding,state.bindTypes[j],originalObjName,newObjName);
           if(newBindingVal != binding) { 
             elems[i].setAttribute(attr,newBindingVal); 
             elems[i].removeAttribute('data-simplebindcollected');
           } else { 
-            // In the case where this happens it would be best to also remove the existing 'collected'
-            // elements from state.boundElems as well for efficiency, but this will work for now: 
+            // If we have made it this far then the element had a binding string on it but it was
+            // not a member of the array that was bound.  nonetheless, it needs to be recollected
+            // and rebound
             elems[i].removeAttribute('data-simplebindcollected');
-          } 
+          }
         }
       }
     }
@@ -62,7 +64,7 @@ simpleBind = (function(w,d,$,util,pub){
         frag.appendChild(newNode);
       }
       config.elem.appendChild(frag); 
-      pub.recollectDOM(config.elem);
+      pub.recollectDOM(config.elem,true);
     } else { 
       // need to remove elems
       delta = config.repeatedElems.length - num; 
@@ -104,10 +106,6 @@ simpleBind = (function(w,d,$,util,pub){
         pub.bind(getNewBindingName(config,i),arrToBind[i]); 
       }
     } 
-  }; 
-
-  var replaceObjName = function(binding,oldObjName,newObjName) { 
-    return binding.replace(new RegExp(':'+oldObjName),':'+newObjName); 
   }; 
 
   pub.registerBindType('simplerepeat',collectionRoutine,bindingRoutine); 

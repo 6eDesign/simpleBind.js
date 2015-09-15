@@ -6,7 +6,11 @@
 		<div>
 			<h4>Array binding (not an array nested in object)</h4>
 			<ul data-simplerepeat="item:arrayObject">
-				<li><span data-simplebind="item.count"></span> - <span data-simplebind="item.value"></span></li>
+				<li>
+          <span data-simplebind="item.count"></span>
+           - <span data-simplebind="example.text"></span>
+          <span data-simplebind="item.value"></span>
+        </li>
 			</ul>
 		</div>
     <button class="something" data-simplebind="example.text" data-simpleevent="click:exampleClickEvent:example.text"></button>

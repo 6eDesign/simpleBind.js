@@ -24,12 +24,7 @@ simpleBind = (function(w,d,$,util,pub){
     var prop = 'data-' + config.prop.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z])/g, '$1-$2');
     config.elem.setAttribute(prop, util.get(obj,config.objKey));
   };
-
-  // ex: replaceObjName('thisProp:objName.objKey,otherProp:objName2.objKey','objName2','newObj')
-  var replaceObjName = function(binding,oldObjName,newObjName) { 
-    return binding.replace(new RegExp(':'+oldObjName+'\\.','g'),':'+newObjName+'.'); 
-  }; 
-
-  pub.registerBindType('simpledata',collectionRoutine,bindingRoutine,replaceObjName); 
+  
+  pub.registerBindType('simpledata',collectionRoutine,bindingRoutine); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
