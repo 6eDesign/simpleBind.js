@@ -26,6 +26,10 @@ simpleBind = (function(w,d,$,util,pub){
           if(newBindingVal != binding) { 
             elems[i].setAttribute(attr,newBindingVal); 
             elems[i].removeAttribute('data-simplebindcollected');
+          } else { 
+            // In the case where this happens it would be best to also remove the existing 'collected'
+            // elements from state.boundElems as well for efficiency, but this will work for now: 
+            elems[i].removeAttribute('data-simplebindcollected');
           } 
         }
       }

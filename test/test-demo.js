@@ -57,5 +57,7 @@ $(document).ready(function(){
     example.arrays.items.push($.extend({},example.arrays.items[0]));
   }
   simpleBind.bind('example',example);
-  simpleBind.bind('arrayObject',arrayExample);
+  window.setTimeout(function(){
+    simpleBind.bind('arrayObject',arrayExample);
+  },500);
 }); 

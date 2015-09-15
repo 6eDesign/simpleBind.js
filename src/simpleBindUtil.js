@@ -47,15 +47,15 @@ var simpleBindUtil = (function(pub){
   // Same as above but retrieves the value
   // instead of setting it:
   pub.get = function(obj,str) {
-    if(str == '$base' || str == '') return obj; 
+    if(str == '$base' || str == '') return obj;
     str = str.split('.');
     for(var i=0; i < str.length; ++i) {
-      // if(!obj || typeof obj[str[i]] == 'undefined') {
-      //   return '';
-      // } else {
-        if(str[i] == '$base') return obj; 
+      if(typeof obj[str[i]] == 'undefined') {
+        return '';
+      } else {
+        if(str[i] == '$base') return obj;
         obj = obj[str[i]];
-      // }
+      }
     }
     return obj;
   };

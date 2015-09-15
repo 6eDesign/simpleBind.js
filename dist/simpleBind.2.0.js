@@ -47,15 +47,15 @@ var simpleBindUtil = (function(pub){
   // Same as above but retrieves the value
   // instead of setting it:
   pub.get = function(obj,str) {
-    if(str == '$base' || str == '') return obj; 
+    if(str == '$base' || str == '') return obj;
     str = str.split('.');
     for(var i=0; i < str.length; ++i) {
-      // if(!obj || typeof obj[str[i]] == 'undefined') {
-      //   return '';
-      // } else {
-        if(str[i] == '$base') return obj; 
+      if(typeof obj[str[i]] == 'undefined') {
+        return '';
+      } else {
+        if(str[i] == '$base') return obj;
         obj = obj[str[i]];
-      // }
+      }
     }
     return obj;
   };
@@ -392,6 +392,10 @@ simpleBind = (function(w,d,$,util,pub){
           var newBindingVal = state.bindTypeOpts[state.bindTypes[j]].objNameReplaceFn(binding,originalObjName,newObjName);
           if(newBindingVal != binding) { 
             elems[i].setAttribute(attr,newBindingVal); 
+            elems[i].removeAttribute('data-simplebindcollected');
+          } else { 
+            // In the case where this happens it would be best to also remove the existing 'collected'
+            // elements from state.boundElems as well for efficiency, but this will work for now: 
             elems[i].removeAttribute('data-simplebindcollected');
           } 
         }
