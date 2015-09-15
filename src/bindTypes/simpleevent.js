@@ -37,7 +37,6 @@ simpleBind = (function(w,d,$,util,pub){
         var objName = objNameAndKey.shift()
           , objKey = objNameAndKey.join('.'); 
       }
-
       elem.addEventListener(eventName,function(evt){
         if(typeof state.eventHandlers[eventHandler] != 'undefined') { 
           if(objNameAndKey) { 

@@ -50,10 +50,11 @@ var simpleBindUtil = (function(pub){
     if(str == '$base' || str === '') return obj;
     str = str.split('.');
     for(var i=0; i < str.length; ++i) {
-      if(typeof obj[str[i]] == 'undefined') {
+      if(str[i] == '$base') { 
+        return obj; 
+      } else if(typeof obj[str[i]] == 'undefined') {
         return '';
       } else {
-        if(str[i] == '$base') return obj;
         obj = obj[str[i]];
       }
     }
@@ -65,27 +66,22 @@ var simpleBindUtil = (function(pub){
     if(str == oldObj) { 
       str = newObj; 
     } else if(str.indexOf(oldObj + '.') == 0) {
-      // console.log('yip',str,oldObj,newObj);
       str = str.replace(standardObjNameRegex,newObj)
     }; 
     return str; 
   }; 
 
   pub.replaceObjNameInBindingStr = function(str,bindType,oldObj,newObj) { 
-    // console.log(str);
     var origStr = str + '';
     if(str.indexOf(':') > -1) { 
       // we have either a bindhandler, simpledata, simpleevent, or simplerepeat
-      console.log('got here',bindType,str);
       switch(bindType) { 
         case 'simplebindhandler': 
         case 'simpledata': 
           str = str.split(','); 
           for(var i=0; i < str.length; ++i) { 
-            console.log('ye');
             str[i] = str[i].split(':'); 
             if(str[i].length > 1) {
-              console.log(str[i][1]);
               str[i][1] = replaceObjNameInStandardFormat(str[i][1],oldObj,newObj)
             }; 
             str[i] = str[i].join(':');
