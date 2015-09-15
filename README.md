@@ -1,6 +1,6 @@
 simpleBind.js
 ======
-A simple, modular, small, optimized, and seo-friendly binding library.  
+A simple, modular, small, and optimized data-binding library.  
 
 ### Getting Started
 **simpleBind.js** has no external dependencies.  Simply download or clone this repository and include the minified simpleBind.{Version}.min.js file in your document.
