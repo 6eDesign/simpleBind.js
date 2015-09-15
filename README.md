@@ -31,7 +31,7 @@ A simple, modular, small, and optimized data-binding library.
 	<h1 data-simplebind="basicExample.text">Welcome to SimpleBind.js</h1>
 ```
 
-While that is useful, that is just the most basic type of binding available in **simpleBind.js**.  You can also bind arrays and create "simplerepeat's", bind objects to inputs for bidirectional data-binding, map JSON attributes to DOM node attributes or data properties, and much more.  We've also included a simple event system to simplify working with bound object events and to more easily access important object values from event callbacks.  
+While that is useful, that is just the most basic type of binding available in **simpleBind.js**.  You can also bind arrays and create "simplerepeat's", bind objects to inputs for bidirectional data-binding, map JSON attributes to DOM node attributes or data properties, and much more.  We've also included a simple event system to simplify working with bound-element's events and to more easily access important object values from event callbacks.  
 
 ### Binding Types
 There are numerous binding types available and you can also extend **simpleBind.js** to support new binding types.  The base binding types are explained below: 
@@ -47,16 +47,18 @@ There are numerous binding types available and you can also extend **simpleBind.
 	<h1 data-simplebind="example.html" data-simplebindhtml="true"></h1>
 ```
 
-### simplebindvalue (data-simplebindvalue=objName.objKey)
+####
+
+#### simplebindvalue (data-simplebindvalue=objName.objKey)
 **simplebindvalue** is just like the **simplebind** binding type except for it is designed for inputs (text, textarea, select, radio, & checkbox).  The binding with **simplebindvalue** is bi-directional and changes made to these inputs will be reflected automatically and immediately in the bound object and in the DOM if other elements are bound to the changed object key.
 
-#### text input example: 
+##### text input example: 
 ```
 	<!-- Basic Input -->
 	<input type="text" data-simplebindvalue="example.nestedObject.someKey" />
 ```
 
-### select input example: 
+#### select input example: 
 **note:** the binding on a select will only work if the bound value is equal to the value of one of the select's options (otherwise selectedIndex will be set to -1).  In other words: **simpleBind.js** will not create new options for you (but if you want to extend this bind type to do so, then we'll talk more about that later in this README).
 ```
 	<!-- Select -->
@@ -71,7 +73,7 @@ There are numerous binding types available and you can also extend **simpleBind.
 	simpleBind.bind('example',{someProp: 2});
 ```
 
-### radio input example: 
+##### radio input example: 
 **note:** like select binding, radio binding will not create new radio options for you.  If the radio's value attribute equals the bound value then it will become selected.  Similarly, if a radio button is selected this will update the bound value to the radio's value.  
 ```
 	<!-- Radio -->
@@ -88,7 +90,7 @@ There are numerous binding types available and you can also extend **simpleBind.
 	simpleBind.bind('example',{someProp: 1});
 ```
 
-## checkbox input example: 
+##### checkbox input example: 
 **note:** checkboxes are for boolean values.  If the bound value is true then the input will be checked, otherwise it will be unchecked.
 ```
 	<!-- Checkbox -->
