@@ -50,10 +50,11 @@ var simpleBindUtil = (function(pub){
     if(str == '$base' || str === '') return obj;
     str = str.split('.');
     for(var i=0; i < str.length; ++i) {
-      if(typeof obj[str[i]] == 'undefined') {
+      if(str[i] == '$base') { 
+        return obj; 
+      } else if(typeof obj[str[i]] == 'undefined') {
         return '';
       } else {
-        if(str[i] == '$base') return obj;
         obj = obj[str[i]];
       }
     }
@@ -65,27 +66,22 @@ var simpleBindUtil = (function(pub){
     if(str == oldObj) { 
       str = newObj; 
     } else if(str.indexOf(oldObj + '.') == 0) {
-      // console.log('yip',str,oldObj,newObj);
       str = str.replace(standardObjNameRegex,newObj)
     }; 
     return str; 
   }; 
 
   pub.replaceObjNameInBindingStr = function(str,bindType,oldObj,newObj) { 
-    // console.log(str);
     var origStr = str + '';
     if(str.indexOf(':') > -1) { 
       // we have either a bindhandler, simpledata, simpleevent, or simplerepeat
-      console.log('got here',bindType,str);
       switch(bindType) { 
         case 'simplebindhandler': 
         case 'simpledata': 
           str = str.split(','); 
           for(var i=0; i < str.length; ++i) { 
-            console.log('ye');
             str[i] = str[i].split(':'); 
             if(str[i].length > 1) {
-              console.log(str[i][1]);
               str[i][1] = replaceObjNameInStandardFormat(str[i][1],oldObj,newObj)
             }; 
             str[i] = str[i].join(':');
@@ -152,7 +148,6 @@ var simpleBind = (function(w,d,$,util,pub){
         var foundBinding = false; 
         for(var j=0; j < state.bindTypes.length; ++j) { 
           if(typeof opts[state.bindTypes[j]] != 'undefined') { 
-            // console.log("FOUND ELEMENT of bindType '" + state.bindTypes[j] + "'",all[i]); 
             if(!foundBinding) { 
               foundBinding = true;  
               all[i].setAttribute('data-simplebindcollected','true'); 
@@ -253,7 +248,6 @@ simpleBind = (function(w,d,$,util,pub){
   };
 
   var bindingRoutine = function(config,obj,flush){
-    if(flush) console.log('flush',flush);
     // binding routine, the function that determines how binding is done for this bind type
     var val = util.get(obj,config.objKey); 
     var oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
@@ -273,17 +267,6 @@ simpleBind = (function(w,d,$,util,pub){
       }
     }
   };
-
-  // var objNameReplaceRe = new RegExp(/^[^\.]*/);
-  // // ex: replaceObjName('someObjName.key1.key2','someObjName','newObjName') => 'newObjName.key1.key2'
-  // var replaceObjName = function(binding,oldObjName,newObjName) { 
-  //   if(binding.indexOf(oldObjName+'.') === 0) { 
-  //     binding = binding.replace(objNameReplaceRe,newObjName); 
-  //   }
-  //   return binding;
-  // }; 
-
-  // pub.registerBindType('simplebind',collectionRoutine,bindingRoutine,replaceObjName); 
   pub.registerBindType('simplebind',collectionRoutine,bindingRoutine); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
@@ -307,28 +290,16 @@ simpleBind = (function(w,d,$,util,pub){
     }
   }; 
 
-  var bindingRoutine = function(config,obj){
+  var bindingRoutine = function(config,obj,flush){
     // binding routine, the function that determines how binding is done for this bind type
     if(typeof state.bindHandlers[config.handler] != 'undefined') { 
       var val = util.get(obj,config.objKey)
         , oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
-      if(val != oldVal) { 
+      if(val != oldVal || flush) { 
         state.bindHandlers[config.handler](config.elem,util.get(obj,config.objKey)); 
       }
     }
   };
-
-  // var objNameReplaceRe = new RegExp(/^[^\.]*/);
-  // ex: replaceObjName('bindHandlerName:someObjName.key1','someObjName','newObjName') 
-  //        => 'bindHandlerNamenewObjName.key1.key2'
-  // 
-  // bindhandlers can be comma-separated, ie: 'handler:obj.key,handler1:obj.key2'
-  // ex: replaceObjName('handler:obj.key,handler1:obj2.key2','obj','newObj')
-  //        => 'handler:newObj.key,handler1:obj2.key2'
-  //        
-  // var replaceObjName = function(binding,oldObjName,newObjName) { 
-  //   return binding.replace(new RegExp(':'+oldObjName+'\\.','g'),':'+newObjName+'.'); 
-  // }; 
 
   pub.registerBindType('simplebindhandler',collectionRoutine,bindingRoutine); 
 
@@ -404,12 +375,9 @@ simpleBind = (function(w,d,$,util,pub){
     pub.addToBoundElems('simplebindvalue',configObj.objName,configObj); 
   }; 
 
-  var bindingRoutine = function(config,obj){
+  var bindingRoutine = function(config,obj,flush){
     // binding routine, the function that determines how binding is done for this bind type
     var val = util.get(obj,config.objKey);
-    // if(val != config.elem.value) { 
-    //   config.elem.value = val;
-    // }
     switch(config.inputType) { 
       case 'select': 
         var opts = config.elem.getElementsByTagName('option'); 
@@ -430,23 +398,13 @@ simpleBind = (function(w,d,$,util,pub){
         break; 
       case 'text': 
       default: 
-        if(val != config.elem.value) { 
+        if(val != config.elem.value || flush) { 
           config.elem.value = val; 
         }
         break; 
     }
   };
 
-  // var objNameReplaceRe = new RegExp(/^[^\.]*/);
-  // // ex: replaceObjName('someObjName.key1.key2','someObjName','newObjName') => 'newObjName.key1.key2'
-  // var replaceObjName = function(binding,oldObjName,newObjName) { 
-  //   if(binding.indexOf(oldObjName+'.') === 0) { 
-  //     binding = binding.replace(objNameReplaceRe,newObjName); 
-  //   }
-  //   return binding;
-  // }; 
-
-  // pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine,replaceObjName); 
   pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{});
@@ -560,10 +518,6 @@ simpleBind = (function(w,d,$,util,pub){
     } 
   }; 
 
-  // var replaceObjName = function(binding,oldObjName,newObjName) { 
-  //   return binding.replace(new RegExp(':'+oldObjName),':'+newObjName); 
-  // }; 
-
   pub.registerBindType('simplerepeat',collectionRoutine,bindingRoutine); 
 
   return pub; 
@@ -607,7 +561,6 @@ simpleBind = (function(w,d,$,util,pub){
         var objName = objNameAndKey.shift()
           , objKey = objNameAndKey.join('.'); 
       }
-
       elem.addEventListener(eventName,function(evt){
         if(typeof state.eventHandlers[eventHandler] != 'undefined') { 
           if(objNameAndKey) { 
@@ -622,26 +575,7 @@ simpleBind = (function(w,d,$,util,pub){
     }
   }; 
 
-  // ex: 
-  //   handler = 'click:clickHandler:someObj.key.key,hover:hoverHandler,submit:submitHandler:someObj2.key,doubleclick:clickHandler:someObj.key'
-  //   replaceObjName(handler,'someObj','newObj')
-  // tougher ex: 
-  //   handler = 'click:clickHandler:someObj.key.key,hover:hoverHandler,submit:submitHandler:someObj2.key,doubleclick:clickHandler:someObj.key'
-  //   replaceObjName(handler,'someObj','newObj')
-  var replaceObjName = function(binding,oldObjName,newObjName) { 
-    binding = binding.split(','); 
-    for(var i=0; i < binding.length; ++i) { 
-      binding[i] = binding[i].split(':'); 
-      if(binding[i].length > 2) { 
-        // if this evaluates truthy then a simple .replace(old,new) will work here: 
-        if(binding[i][2].indexOf(oldObjName+'.') == 0) binding[i][2] = binding[i][2].replace(oldObjName,newObjName); 
-      }
-      binding[i] = binding[i].join(':');
-    }
-    return binding.join(','); 
-  }; 
-
-  pub.registerBindType('simpleevent',collectionRoutine,null,replaceObjName); 
+  pub.registerBindType('simpleevent',collectionRoutine,null); 
 
   pub.registerEvent = function(eventName,func) { 
     state.eventHandlers[eventName] = func; 
@@ -675,13 +609,7 @@ simpleBind = (function(w,d,$,util,pub){
     var prop = 'data-' + config.prop.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z])/g, '$1-$2');
     config.elem.setAttribute(prop, util.get(obj,config.objKey));
   };
-
-  // ex: replaceObjName('thisProp:objName.objKey,otherProp:objName2.objKey','objName2','newObj')
-  // var replaceObjName = function(binding,oldObjName,newObjName) { 
-  //   return binding.replace(new RegExp(':'+oldObjName+'\\.','g'),':'+newObjName+'.'); 
-  // }; 
-
-  // pub.registerBindType('simpledata',collectionRoutine,bindingRoutine,replaceObjName); 
+  
   pub.registerBindType('simpledata',collectionRoutine,bindingRoutine); 
   return pub; 
 })(window,document,jQuery,simpleBindUtil,simpleBind||{}); 

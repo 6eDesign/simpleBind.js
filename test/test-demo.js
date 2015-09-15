@@ -1,5 +1,8 @@
-simpleBind.registerBindHandler('logValueBH',function(elem,value){
+simpleBind.registerBindHandler('logValueBH',function(evt,value){
 	console.log('bind handler called for', arguments);
+}); 
+simpleBind.registerEvent('alertHello',function(evt,value){
+  alert('Hello World, ' + value);
 }); 
 simpleBind.registerEvent('exampleClickEvent',function(val){
   console.log(this,val);

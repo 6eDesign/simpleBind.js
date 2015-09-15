@@ -2,19 +2,25 @@
 	<head>
 	</head>
 	<body>
-		<h1 data-simplebind="example.text" data-simplebindhandler="logValueBH:example.text"></h1>	
+		<h1>Basic Visual Tests</h1>
 		<div>
 			<h4>Array binding (not an array nested in object)</h4>
+			<div>You should see the numbers 0-4 next to the string 'hello world' below</div>
 			<ul data-simplerepeat="item:arrayObject">
 				<li>
-          <span data-simplebind="item.count"></span>
-           - <span data-simplebind="example.text"></span>
-          <span data-simplebind="item.value"></span>
+          <span data-simplebind="item.count"></span> - <span data-simplebind="example.text"></span>*
         </li>
 			</ul>
+			<div>
+				*hello world is a non-array bound-object inside of a repeat template to ensure that the autoRebindingQueue is working properly for simpleBind.recollectDOM() with flushCache=true
+			</div>
 		</div>
-    <button class="something" data-simplebind="example.text" data-simpleevent="click:exampleClickEvent:example.text"></button>
+		<hr>
+		<h4>Input binding</h4>
 		<input type="text" data-simplebindvalue="example.text" data-simpledata="someProp:example.text,someOtherProp:example.fakeProp"/>
+    <button class="something" data-simplebind="example.text" data-simpleevent="click:exampleClickEvent:example.text"></button>
+    <hr>
+    <h4>Array (simplerepeat) binding w/ nested input value bindings</h4>
 		<div>
 	    <ul data-simplerepeat="item:example.arrays.items">
         <li>
@@ -25,17 +31,26 @@
             </div>
             <div>
               <input type="text" data-simplebindvalue="item.prop2" />
+	            <span data-simplebind="item.prop2"></span>
           	</div>
-            <div data-simplebind="item.prop2"></div>
         </li>
 	    </ul>
 		</div>
+		<hr>
 		<div>
 			<h4>Key that doesn't exist test (should see nothing in pre below)</h4>
 			<pre data-simplebind="example.fakekey"></pre>
 		</div>
+		<hr>
+		<h4>Contents of 'example' object:</h4>
 		<div>
 			<pre data-simplebind="example.$base"></pre>
+		</div>
+		<hr>
+		<h4>Simple event</h4>
+		<div>
+			button should alert "hello world + ${example.text}"
+			<button data-simpleevent="click:alertHello:example.text">Click Me</button>
 		</div>
 		<script type="text/javascript" src="src/vendor/jQuery.1.8.3.min.js"></script>
 		<script type="text/javascript" src="dist/simpleBind.2.0.js"></script>

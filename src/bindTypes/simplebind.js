@@ -14,7 +14,6 @@ simpleBind = (function(w,d,$,util,pub){
   };
 
   var bindingRoutine = function(config,obj,flush){
-    if(flush) console.log('flush',flush);
     // binding routine, the function that determines how binding is done for this bind type
     var val = util.get(obj,config.objKey); 
     var oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
