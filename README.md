@@ -70,13 +70,33 @@ There are numerous binding types available and you can also extend **simpleBind.
 ```
 
 ### radio input example: 
-**note:** like select binding, radio binding will not create new radio options for you.  
+**note:** like select binding, radio binding will not create new radio options for you.  If the radio's value attribute equals the bound value then it will become selected.  Similarly, if a radio button is selected this will update the bound value to the radio's value.  
 ```
 	<!-- Radio -->
-	<label><input type="radio" data-simplebindvalue="example.someProp" value="0" />Option 0</label>
-	<label><input type="radio" data-simplebindvalue="example.someProp" value="1" />Option 1</label>
-	<label><input type="radio" data-simplebindvalue="example.someProp" value="2" />Option 2</label>
+	<label>
+		<input type="radio" data-simplebindvalue="example.someProp" value="0" />
+		Option 0
+	</label>
+	<label>
+		<input type="radio" data-simplebindvalue="example.someProp" value="1" />
+		Option 1
+	</label>
 ```
 ```
-	simpleBind.bind('example',{someProp: 2});
+	simpleBind.bind('example',{someProp: 1});
 ```
+
+## checkbox input example: 
+**note:** checkboxes are for boolean values.  If the bound value is true then the input will be checked, otherwise it will be unchecked.
+```
+	<!-- Checkbox -->
+	<label>
+		<input type="checkbox" data-simplebindvalue="example.someBoolean" />
+		Some Boolean?
+	</label>
+```
+```
+	// this will check the example checkbox: 
+	simpleBind.bind('example',{someBoolean: true}); 
+```
+
