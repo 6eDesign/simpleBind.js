@@ -93,7 +93,7 @@ var simpleBindUtil = (function(pub){
           str[1] = replaceObjNameInStandardFormat(str[1],oldObj,newObj); 
           str = str.join(':'); 
           break; 
-        case 'simpeevent': 
+        case 'simpleevent': 
           str = str.split(':'); 
           if(str.length >= 3) { 
             str[2] = replaceObjNameInStandardFormat(str[2],oldObj,newObj); 
@@ -551,6 +551,7 @@ simpleBind = (function(w,d,$,util,pub){
 
 
   var collectionRoutine = function(elem,opts) { 
+    console.log(elem);
     var events = opts.simpleevent.split(','); 
     for(var i=0; i < events.length; ++i) { 
       var eventArr = events[i].split(':') 

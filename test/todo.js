@@ -43,6 +43,7 @@ simpleBind.registerEvent('addNewItem',function(evt,newItem){
 }); 
 
 simpleBind.registerEvent('removeItem',function(evt,todoID){
+	console.log(todoObj,todoID);
 	for(var i=0; i < todoObj.tasks.length; ++i) { 
 		if(todoObj.tasks[i].id == todoID) { 
 			todoObj.tasks.splice(i,1); 

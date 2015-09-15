@@ -27,6 +27,7 @@ simpleBind = (function(w,d,$,util,pub){
 
 
   var collectionRoutine = function(elem,opts) { 
+    console.log(elem);
     var events = opts.simpleevent.split(','); 
     for(var i=0; i < events.length; ++i) { 
       var eventArr = events[i].split(':') 
