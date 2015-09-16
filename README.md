@@ -112,7 +112,7 @@ which would populate your list with all of the states found in the array:
 		<!-- and so on... -->
 	</ul>
 ```
-NOTE: **simplerepeat** blocks must have a single child node.  This child node can have as many nested children as you would like but it should have no siblings, for example, this is OK: 
+**note:** *simplerepeat* blocks must have a single child node.  This child node can have as many nested children as you would like but it should have no siblings, for example, this is OK: 
 ```
 	<ul data-simplerepeat="item:example.itemsArray"> <!-- has only one child -->
 		<li>
@@ -138,7 +138,7 @@ but this will not work:
 ###### **(data-simpleevent=eventName:eventCallbackName:objName.objKey)**
 With many dynamically bound elements and more complicated data-binding apps, managing events can become a hassle.  We wanted to create a declarative approach to managing these events within the HTML.  At the same time, we don't want this to be inefficient **or** overly confusing.  **simpleevent** is the result.  
 
-The basic idea is simple, you define a data-simpleevent property to an element, specifying at least an *eventName* ('click','hover','submit',etc.) and an *eventCallbackName* (as a string).  If you'd like, you can also specify a third parameter of an object name and/or key and the value of this will be passed to your event callback.
+The basic idea is simple, you attach a data-simpleevent property to an element, specifying at least an *eventName* ('click','hover','submit',etc.) and an *eventCallbackName* (as a string).  If you'd like, you can also specify a third parameter of an object name and/or key and the value of this will be passed to your event callback.
 
 Event callbacks are registered by calling **simplebind.registerEvent(eventName,eventCallbackFn)**.  For example, we might  register a submit handler on a registration form in the HTML: 
 ```
@@ -161,6 +161,7 @@ You could then define and register an event handler/callback function in JavaScr
 	}; 
 	simpleBind.registerEvent('validateForm',validateForm); 
 ```
+**simpleevent's** will work with any event type and, like all other bind types, can be safely nested inside of **simplerepeat's**.
 
 ----------
 
@@ -219,5 +220,55 @@ You could then define and register an event handler/callback function in JavaScr
 ```
 	// this will check the example checkbox: 
 	simpleBind.bind('example',{someBoolean: true}); 
+```
+
+----------
+
+
+#### simplebindhandler
+###### **(data-simplebindhandler=bindHandlerName:objName.objKey)**
+**simplebindhandler** allows you to define and specify a function that will be called whenever the specified object or object property is updated in **simpleBind.js**.  The *bindhandler* function will be called with two arguments: *elem* (the element the *bindhandler* is attached to) and *value* (the value of the updated object or object property).  
+
+This is a very useful aspect of **simpleBind.js** and can be used to do a wide variety  of things.  Here is a very simple example that will enable a submit button when a specific object property ('form.isValid') is set to **true** and disable that button in any other situation:
+
+HTML
+```
+	<button type="submit" data-simplebindhandler="enableWhenValid:form.isValid" />
+```
+JavaScript
+```
+	var enableWhenValid = function(elem,valid) { 
+		elem.setAttribute('disabled',valid ? 'false'  : 'true'); 
+	}; 
+	simpleBind.registerBindHandler('enableWhenValid',enableWhenValid); 
+```
+
+----------
+
+
+#### simpledata
+###### **(data-simpledata=dataProperty1:objName.objKey)**
+**simplebinddata** allows you to quickly add data-attr's to an element and to set these attributes to specified *simplebound* objects.  In the following example, we will assume we have the following object bound to our document: 
+
+JavaScript
+```
+	var dataObj = { 
+		enabled: true, 
+		id: 239823
+	}; 
+	simpleBind.bind('theData',dataObj);
+```
+
+We could bind a single, *data-is-enabled* attribute to an element like this: 
+```
+	<div data-simpledata="isEnabled:theData.enabled"></div>
+```
+
+**notice:** take note that you do not need to specify the 'data-' portion of the attribute that you want to bind and that the rest of the attribute string is converted from **snake-case** to **camelCase** when declaring the binding in the HTML.  
+
+Similar to **simpleevent's** and **simplebindhandler's**, if you'd like to specify multiple bound data-attributes, you can do so by separating the attributes by a comma.  For example, to set both a *data-is-enabled* and a *data-id* attribute in the above example, we could use the following HTML: 
+
+```
+	<div data-simpledata="isEnabled:theData.enabled,id:theData.id"></div>
 ```
 
