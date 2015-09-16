@@ -156,7 +156,8 @@ You could then define and register an event handler/callback function in JavaScr
 			// allow form submission, do nothing..
 		} else { 
 			// show some errors or something
-			return false
+			// and use event argument to prevent form submission: 
+			event.preventDefault();
 		}
 	}; 
 	simpleBind.registerEvent('validateForm',validateForm); 
