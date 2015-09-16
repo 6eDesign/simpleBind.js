@@ -195,14 +195,13 @@ var simpleBind = (function(w,d,$,util,pub){
     return state;
   }; 
 
-  pub.registerBindType = function(selector,collectionRoutine,bindingRoutine,objNameReplaceFn) { 
+  pub.registerBindType = function(selector,collectionRoutine,bindingRoutine) { 
     if(typeof state.bindTypeOpts[selector] == 'undefined') { 
       state.bindTypeOpts[selector] = { }; 
       state.bindTypes.push(selector); 
     }
     state.bindTypeOpts[selector].collection = collectionRoutine; 
     state.bindTypeOpts[selector].binding = bindingRoutine; 
-    state.bindTypeOpts[selector].objNameReplaceFn = objNameReplaceFn;
   }; 
 
   pub.addToBoundElems = function(bindType,objName,configObj) { 
@@ -431,8 +430,6 @@ simpleBind = (function(w,d,$,util,pub){
         var attr = 'data-' + state.bindTypes[j]
           , binding = elems[i].getAttribute(attr); 
         if(binding) { 
-          // var newBindingVal = state.bindTypeOpts[state.bindTypes[j]].objNameReplaceFn(binding,originalObjName,newObjName);
-          // var newBindingVal = state.bindTypeOpts[state.bindTypes[j]].objNameReplaceFn(binding,originalObjName,newObjName);
           var newBindingVal = util.replaceObjNameInBindingStr(binding,state.bindTypes[j],originalObjName,newObjName);
           if(newBindingVal != binding) { 
             elems[i].setAttribute(attr,newBindingVal); 

@@ -273,3 +273,65 @@ Similar to **simpleevent's** and **simplebindhandler's**, if you'd like to speci
 	<div data-simpledata="isEnabled:theData.enabled,id:theData.id"></div>
 ```
 
+
+### Extending **simpleBind.js**
+You can also extend **simpleBind.js** to support new binding types.  In fact, all of the binding types described above are created using the extension guideline described below. 
+
+To get started you will need to have cloned this github repository to your local machine.  This project uses Node.js and Gulp for linting, minifying, and testing purposes.  
+
+Install the dependencies for this project with **npm install** and then run the **gulp** command to start the default Gulp task which will watch the files and auto lint and minify upon any changes.  All of the *bindType* modules are stored in *src/bindTypes* and each should be named after the data-attribute by which it is assigned.  (ex: data-simplebindhandler maps to *src/bindTypes/simplebindhandler.js*)
+
+For this example, we will create a simplified version of the **data-simplebindvalue** bind type.  To begin, an overview of this process might be helpful:
+
+1.  We define a collection function which will be passed elements from the DOM that contain the bind type we are creating.  This function is called just once per binding and is responsible for creating a configuration object that will be stored and used later when a value is bound to this element.  
+2. Next we define the processing function.  This function will be called whenever an element's bound value is updated.  The arguments passed to this function include the *config* object created in the last step and the object that was bound. This function is responsible for updating the value of the element to the value of the bound object.
+3. Finally, we register this bind type by calling:
+```
+	simpleBind.registerBindType(bindType,collectionFn,processingFn)  
+```
+
+**Example**
+*A simplified version of the **data-simplebindvalue** bind type*: 
+
+####1. We can call *simpleBind.getState()* to retrieve globally available state-tracking object that **simpleBind.js** shares between bind type modules.  The returned object contains a number of useful things including current and previously-bound object states. 
+```
+var state = simpleBind.getState(); 
+```
+####2. We define our collection routine, the function that defines the object stored in *state.boundElems*.  The arguments are *elem* (the element that was found with this bind type), and *opts* (all of the data-attributes assigned to this element as an object).
+
+We store references to the object name, the object key as a string of the format 'key.key.key' and then call *simpleBind.addToBoundElems()* to seal the binding on this element - if it did not meet our criteria we could skip this step and the element would never be called for processing:
+```
+var collectionRoutine = function(elem,opts){
+  opts.simplebind = opts.simplebind.split('.'); 
+  var configObj = { 
+    elem: elem,
+    objName: opts.simplebind.shift(), 
+    objKey: opts.simplebind.join('.')
+  }; 
+  simpleBind.addToBoundElems('simplebind',configObj.objName,configObj); 
+}; 
+```
+####3. Now we define our binding routine, the function that determines how binding is done for this bind type and is called whenever the bound value is updated. Arguments are *config* (the object stored to *state.boundElems* in the collection function), *obj* (the object that was bound), and *flush* (a Boolean value that tells us if we should force-apply this value to the object [even if we don't think the value has changed]). 
+
+In this function we use simpleBindUtil's **get()** function which allows us to retrieve an object value by specifying the object and the desired key in dot-notation.  
+
+**ex:** simpleBindUtil.get({hello:{world:123}},'hello.world') **returns ->** 123
+	
+We also access the state.boundObjectsLast object to determine the previously bound value of this object property to determine if it has changed and whether we should update the element's value.
+
+& for this crude example, we just use innerHTML to set the new value of the element.
+```
+var bindingRoutine = function(config,obj,flush){
+  var val = util.get(obj,config.objKey);
+  var oldVal = util.get(state.boundObjectsLast,config.objKey); 
+  if(val != oldVal || flush) { 
+    config.elem.innerHTML = val; 
+  }
+};
+```
+####4. Finally, we register this bind type by calling: 
+```
+simpleBind.registerBindType('simplebind',collectionRoutine,bindingRoutine); 
+
+```
+
