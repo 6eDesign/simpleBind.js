@@ -1,4 +1,4 @@
-simpleBind = (function(w,d,$,util,pub){
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState(); 
   state.repeatCount = 0; 
   state.repeatDictionary = { }; 
@@ -109,4 +109,4 @@ simpleBind = (function(w,d,$,util,pub){
   pub.registerBindType('simplerepeat',collectionRoutine,bindingRoutine); 
 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBindUtil,simpleBind||{}); 

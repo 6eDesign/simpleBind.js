@@ -1,4 +1,22 @@
 var simpleBindUtil = (function(pub){
+
+  var extendProperty = function(propFrom,propTo) { 
+    if(typeof propFrom == 'object' && typeof propTo == 'object') { 
+      return pub.extend(propTo,propFrom);
+    } else { 
+      return propFrom; 
+    }
+  }; 
+
+  pub.extend = function() { 
+    for(var i=arguments.length; i > 0; --i) { 
+      for(var key in arguments[i]) { 
+        arguments[i-1][key] = extendProperty(arguments[i][key],arguments[i-1][key]); 
+      }
+    }
+    return arguments[0];
+  };
+
   pub.getKeys = function(obj) {
     if(Object.keys) {
       return Object.keys(obj);

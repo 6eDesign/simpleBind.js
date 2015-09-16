@@ -68,10 +68,10 @@ simpleBind.registerBindHandler('taskCompletedHandler',function(elem,completed){
 	elem.className = completed ? 'complete' : ''; 
 }); 
 
-var todo = (function(w,d,$,pub){
+var todo = (function(w,d,pub){
 	var init = function(){ 
 		simpleBind.bind('todo',todoObj); 
 	};
-	$(d).ready(init); 
+	d.addEventListener('DOMContentLoaded',init); 
 	return pub; 
-})(window,document,jQuery,{}); 
+})(window,document,{}); 

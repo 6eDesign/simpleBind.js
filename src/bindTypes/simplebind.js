@@ -1,4 +1,4 @@
-simpleBind = (function(w,d,$,util,pub){
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
 
   var collectionRoutine = function(elem,opts){
@@ -35,4 +35,4 @@ simpleBind = (function(w,d,$,util,pub){
   };
   pub.registerBindType('simplebind',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBindUtil,simpleBind||{}); 

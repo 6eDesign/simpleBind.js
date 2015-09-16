@@ -1,4 +1,4 @@
-simpleBind = (function(w,d,$,pub){
+simpleBind = (function(w,d,pub){
   state = pub.getState(); 
   state.filters = { };
   pub.getFilteredValue = function(val,filterStr) { 
@@ -16,4 +16,4 @@ simpleBind = (function(w,d,$,pub){
     }
   };   
   return pub; 
-})(window,document,jQuery,simpleBind||{}); 
+})(window,document,simpleBind||{}); 

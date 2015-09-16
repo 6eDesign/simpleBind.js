@@ -21,13 +21,12 @@
 
 */
 
-simpleBind = (function(w,d,$,util,pub){
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
   state.eventHandlers = { }; 
 
 
   var collectionRoutine = function(elem,opts) { 
-    console.log(elem);
     var events = opts.simpleevent.split(','); 
     for(var i=0; i < events.length; ++i) { 
       var eventArr = events[i].split(':') 
@@ -59,4 +58,4 @@ simpleBind = (function(w,d,$,util,pub){
   }; 
 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBindUtil,simpleBind||{}); 

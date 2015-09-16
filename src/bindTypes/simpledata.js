@@ -1,4 +1,4 @@
-simpleBind = (function(w,d,$,util,pub){
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
 
   // takes form: data-simpledata="thisProp:objName.objKey,otherProp:objName.objKey"
@@ -27,4 +27,4 @@ simpleBind = (function(w,d,$,util,pub){
   
   pub.registerBindType('simpledata',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBindUtil,simpleBind||{}); 

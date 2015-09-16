@@ -1,4 +1,4 @@
-var simpleBind = (function(w,d,$,util,pub){
+var simpleBind = (function(w,d,util,pub){
   var state = { 
     bindTypes: [ ], 
     bindTypeOpts: { }, 
@@ -73,10 +73,12 @@ var simpleBind = (function(w,d,$,util,pub){
     state.boundObjects[objName] = obj; 
     processBoundElems(state.boundElems[objName],obj); 
     
-    state.boundObjectsLast[objName] = $.extend({},obj);
+    state.boundObjectsLast[objName] = util.extend({},obj);
   }; 
 
-  $(d).ready(init); 
+  d.addEventListener('DOMContentLoaded',function(){
+    init();
+  }); 
 
   pub.getState = function() { 
     return state;
@@ -117,4 +119,4 @@ var simpleBind = (function(w,d,$,util,pub){
   }; 
 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBindUtil,simpleBind||{}); 

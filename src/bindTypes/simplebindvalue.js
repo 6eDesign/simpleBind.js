@@ -1,4 +1,4 @@
-simpleBind = (function(w,d,$,util,pub){
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState(); 
   var changeInitiatorMarker = 'data-simplebindvaluechanger';
   /**
@@ -40,11 +40,11 @@ simpleBind = (function(w,d,$,util,pub){
 
   var attachAppropriateEventHandlers = function(elem,inputType) { 
     switch(inputType) { 
-      case 'text': 
-        $(elem).on('keyup',handleInput);
+      case 'text':
+        elem.addEventListener('keyup',handleInput); 
         break; 
       default: 
-        $(elem).on('change',handleInput);
+        elem.addEventListener('change',handleInput);
         break; 
     }
   }; 
@@ -94,4 +94,4 @@ simpleBind = (function(w,d,$,util,pub){
 
   pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{});
+})(window,document,simpleBindUtil,simpleBind||{});

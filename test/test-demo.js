@@ -55,10 +55,7 @@ var arrayExample = [
   }
 ]; 
 
-$(document).ready(function(){
-  // for(var i=0; i < 100; ++i) { 
-  //   example.arrays.items.push($.extend({},example.arrays.items[0]));
-  // }
+document.addEventListener('DOMContentLoaded',function(){
   simpleBind.bind('example',example);
-  simpleBind.bind('arrayObject',arrayExample);
+  simpleBind.bind('arrayObject',arrayExample);  
 }); 

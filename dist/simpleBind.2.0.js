@@ -1,4 +1,22 @@
 var simpleBindUtil = (function(pub){
+
+  var extendProperty = function(propFrom,propTo) { 
+    if(typeof propFrom == 'object' && typeof propTo == 'object') { 
+      return pub.extend(propTo,propFrom);
+    } else { 
+      return propFrom; 
+    }
+  }; 
+
+  pub.extend = function() { 
+    for(var i=arguments.length; i > 0; --i) { 
+      for(var key in arguments[i]) { 
+        arguments[i-1][key] = extendProperty(arguments[i][key],arguments[i-1][key]); 
+      }
+    }
+    return arguments[0];
+  };
+
   pub.getKeys = function(obj) {
     if(Object.keys) {
       return Object.keys(obj);
@@ -111,7 +129,7 @@ var simpleBindUtil = (function(pub){
 
   return pub; 
 })({}); 
-var simpleBind = (function(w,d,$,util,pub){
+var simpleBind = (function(w,d,util,pub){
   var state = { 
     bindTypes: [ ], 
     bindTypeOpts: { }, 
@@ -186,10 +204,12 @@ var simpleBind = (function(w,d,$,util,pub){
     state.boundObjects[objName] = obj; 
     processBoundElems(state.boundElems[objName],obj); 
     
-    state.boundObjectsLast[objName] = $.extend({},obj);
+    state.boundObjectsLast[objName] = util.extend({},obj);
   }; 
 
-  $(d).ready(init); 
+  d.addEventListener('DOMContentLoaded',function(){
+    init();
+  }); 
 
   pub.getState = function() { 
     return state;
@@ -230,8 +250,8 @@ var simpleBind = (function(w,d,$,util,pub){
   }; 
 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
-simpleBind = (function(w,d,$,util,pub){
+})(window,document,simpleBindUtil,simpleBind||{}); 
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
 
   var collectionRoutine = function(elem,opts){
@@ -268,8 +288,8 @@ simpleBind = (function(w,d,$,util,pub){
   };
   pub.registerBindType('simplebind',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
-simpleBind = (function(w,d,$,util,pub){
+})(window,document,simpleBindUtil,simpleBind||{}); 
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
   state.bindHandlers = { }; 
 
@@ -309,8 +329,8 @@ simpleBind = (function(w,d,$,util,pub){
   }; 
 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
-simpleBind = (function(w,d,$,util,pub){
+})(window,document,simpleBindUtil,simpleBind||{}); 
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState(); 
   var changeInitiatorMarker = 'data-simplebindvaluechanger';
   /**
@@ -352,11 +372,11 @@ simpleBind = (function(w,d,$,util,pub){
 
   var attachAppropriateEventHandlers = function(elem,inputType) { 
     switch(inputType) { 
-      case 'text': 
-        $(elem).on('keyup',handleInput);
+      case 'text':
+        elem.addEventListener('keyup',handleInput); 
         break; 
       default: 
-        $(elem).on('change',handleInput);
+        elem.addEventListener('change',handleInput);
         break; 
     }
   }; 
@@ -406,8 +426,8 @@ simpleBind = (function(w,d,$,util,pub){
 
   pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{});
-simpleBind = (function(w,d,$,util,pub){
+})(window,document,simpleBindUtil,simpleBind||{});
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState(); 
   state.repeatCount = 0; 
   state.repeatDictionary = { }; 
@@ -518,7 +538,7 @@ simpleBind = (function(w,d,$,util,pub){
   pub.registerBindType('simplerepeat',collectionRoutine,bindingRoutine); 
 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBindUtil,simpleBind||{}); 
 /*
 
   Events take the form: 'eventName:eventHandlerName:optionalObjName.key.key'
@@ -542,13 +562,12 @@ simpleBind = (function(w,d,$,util,pub){
 
 */
 
-simpleBind = (function(w,d,$,util,pub){
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
   state.eventHandlers = { }; 
 
 
   var collectionRoutine = function(elem,opts) { 
-    console.log(elem);
     var events = opts.simpleevent.split(','); 
     for(var i=0; i < events.length; ++i) { 
       var eventArr = events[i].split(':') 
@@ -580,8 +599,8 @@ simpleBind = (function(w,d,$,util,pub){
   }; 
 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
-simpleBind = (function(w,d,$,util,pub){
+})(window,document,simpleBindUtil,simpleBind||{}); 
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
 
   // takes form: data-simpledata="thisProp:objName.objKey,otherProp:objName.objKey"
@@ -610,8 +629,8 @@ simpleBind = (function(w,d,$,util,pub){
   
   pub.registerBindType('simpledata',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,jQuery,simpleBindUtil,simpleBind||{}); 
-simpleBind = (function(w,d,$,pub){
+})(window,document,simpleBindUtil,simpleBind||{}); 
+simpleBind = (function(w,d,pub){
   state = pub.getState(); 
   state.filters = { };
   pub.getFilteredValue = function(val,filterStr) { 
@@ -629,4 +648,4 @@ simpleBind = (function(w,d,$,pub){
     }
   };   
   return pub; 
-})(window,document,jQuery,simpleBind||{}); 
+})(window,document,simpleBind||{}); 
