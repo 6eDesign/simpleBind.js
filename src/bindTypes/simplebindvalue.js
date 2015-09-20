@@ -7,6 +7,8 @@ simpleBind = (function(w,d,util,pub){
   var handleInput = function() { 
     var binding = this.getAttribute('data-simplebindvalue').split('.')
       , objName = binding.shift(); 
+    // in case this object hasn't been set yet, for whatever reason, set it to a blank object:
+    if(typeof state.boundObjects[objName] == 'undefined') state.boundObjects[objName] = {}; 
     util.set(state.boundObjects[objName],binding.join('.'),getInputValueByType(this));     
     pub.bind(objName,state.boundObjects[objName]);
     this.setAttribute(changeInitiatorMarker,'true');
@@ -14,6 +16,13 @@ simpleBind = (function(w,d,util,pub){
       var originalObjName = state.repeatDictionary[objName.split('-').shift()];
       pub.bind(originalObjName,state.boundObjects[originalObjName]);
     }
+  }; 
+
+  var rateLimitInput = function() { 
+    var elem = this; 
+    util.delay(function(){
+      handleInput.call(elem);
+    },50)
   }; 
 
   var getInputType = function(elem) { 
@@ -30,9 +39,12 @@ simpleBind = (function(w,d,util,pub){
   var getInputValueByType = function(elem) { 
     var type = getInputType(elem); 
     switch(type) { 
+      case 'textarea': 
+        return elem.innerHTML;
+        break; 
       case 'checkbox': 
         return elem.checked;
-      case 'type': 
+        break; 
       default: 
         return elem.value; 
     } 
@@ -41,8 +53,9 @@ simpleBind = (function(w,d,util,pub){
   var attachAppropriateEventHandlers = function(elem,inputType) { 
     switch(inputType) { 
       case 'text':
-        elem.addEventListener('keyup',handleInput); 
-        break; 
+      case 'password':
+      case 'textarea':
+        elem.addEventListener('keyup',rateLimitInput); 
       default: 
         elem.addEventListener('change',handleInput);
         break; 

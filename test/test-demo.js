@@ -55,7 +55,35 @@ var arrayExample = [
   }
 ]; 
 
+var pro = { }; 
+pro.tasksForChosenZip = [ 
+  { 
+    description: '', 
+    childTasks: [ 
+      { taskOid: -1, description: 'Choose a Task' }
+    ]
+  },
+  { 
+    description: 'I am a parent task', 
+    childTasks: [ 
+      { taskOid: 2392398, description: 'I am a task, #1' },
+      { taskOid: 2392399, description: 'I am a task, #2' },
+      { taskOid: 2392400, description: 'I am a task, #3' },
+    ] 
+  }, { 
+    description: 'I am another parent task', 
+    childTasks: [ 
+      { taskOid: 239823, description: 'I am a task, #4' },
+      { taskOid: 239824, description: 'I am a task, #5' },
+      { taskOid: 239825, description: 'I am a task, #6' },
+    ] 
+  }
+]; 
+
 document.addEventListener('DOMContentLoaded',function(){
   simpleBind.bind('example',example);
   simpleBind.bind('arrayObject',arrayExample);  
+  simpleBind.bind('pro',pro);
 }); 
+
+

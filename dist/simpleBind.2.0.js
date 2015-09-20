@@ -8,6 +8,14 @@ var simpleBindUtil = (function(pub){
     }
   }; 
 
+  pub.delay = (function(){
+    var timer = 0;
+    return function(callback, ms){
+      clearTimeout (timer);
+      timer = setTimeout(callback, ms);
+    };
+  })();
+
   pub.extend = function() { 
     for(var i=arguments.length; i > 0; --i) { 
       for(var key in arguments[i]) { 
@@ -54,13 +62,29 @@ var simpleBindUtil = (function(pub){
   // A great function for setting object values
   // via a string with dot notation:
   // ex) set({x:{y:{z:2}}},'y.z',3)
-  pub.set = function(obj,str,val) {
-    str = str.split('.');
-    while(str.length > 1) {
-      obj = obj[str.shift()];
+ 
+  // pub.set = function(obj,str,val) {
+  //   str = str.split('.');
+  //   while(str.length > 1) {
+  //     obj = obj[str.shift()];
+  //   }
+  //   obj[str.shift()] = val;
+  // };
+
+  // let's modify this function to be able to 
+  // build an object so we could have SEO friendly
+  // binds and so that people don't have to rush
+  // to bind their objects immediately
+  pub.set = function(obj,str,val) { 
+    str = str.split('.'); 
+    var finalProp = str.pop(); 
+    while(str.length) { 
+      var key = str.shift(); 
+      obj[key] = typeof obj[key] == 'undefined' ? { } : obj[key]; 
+      obj = obj[key];
     }
-    return obj[str.shift()] = val;
-  };
+    obj[finalProp] = val; 
+  }; 
 
   // Same as above but retrieves the value
   // instead of setting it:
@@ -92,20 +116,8 @@ var simpleBindUtil = (function(pub){
   pub.replaceObjNameInBindingStr = function(str,bindType,oldObj,newObj) { 
     var origStr = str + '';
     if(str.indexOf(':') > -1) { 
-      // we have either a bindhandler, simpledata, simpleevent, or simplerepeat
+      // we have either a bindhandler, simpledata, simpleevent, simplebindattrs, or simplerepeat
       switch(bindType) { 
-        case 'simplebindhandler': 
-        case 'simpledata': 
-          str = str.split(','); 
-          for(var i=0; i < str.length; ++i) { 
-            str[i] = str[i].split(':'); 
-            if(str[i].length > 1) {
-              str[i][1] = replaceObjNameInStandardFormat(str[i][1],oldObj,newObj)
-            }; 
-            str[i] = str[i].join(':');
-          }
-          str = str.join(','); 
-          break; 
         case 'simplerepeat': 
           str = str.split(':'); 
           str[1] = replaceObjNameInStandardFormat(str[1],oldObj,newObj); 
@@ -117,6 +129,20 @@ var simpleBindUtil = (function(pub){
             str[2] = replaceObjNameInStandardFormat(str[2],oldObj,newObj); 
           }
           str = str.join(':');
+          break; 
+        case 'simplebindhandler': 
+        case 'simpledata': 
+        case 'simplebindattrs':
+        default:
+          str = str.split(','); 
+          for(var i=0; i < str.length; ++i) { 
+            str[i] = str[i].split(':'); 
+            if(str[i].length > 1) {
+              str[i][1] = replaceObjNameInStandardFormat(str[i][1],oldObj,newObj)
+            }; 
+            str[i] = str[i].join(':');
+          }
+          str = str.join(','); 
           break; 
       }
     } else { 
@@ -202,9 +228,10 @@ var simpleBind = (function(w,d,util,pub){
   var processBindings = function(objName,obj) { 
     if(typeof state.boundObjectsLast[objName] == 'undefined') state.boundObjectsLast[objName] = { }; 
     state.boundObjects[objName] = obj; 
-    processBoundElems(state.boundElems[objName],obj); 
-    
-    state.boundObjectsLast[objName] = util.extend({},obj);
+    if(typeof state.boundElems[objName] != 'undefined') { 
+      processBoundElems(state.boundElems[objName],obj); 
+      state.boundObjectsLast[objName] = util.extend({},obj);
+    }
   }; 
 
   d.addEventListener('DOMContentLoaded',function(){
@@ -339,6 +366,8 @@ simpleBind = (function(w,d,util,pub){
   var handleInput = function() { 
     var binding = this.getAttribute('data-simplebindvalue').split('.')
       , objName = binding.shift(); 
+    // in case this object hasn't been set yet, for whatever reason, set it to a blank object:
+    if(typeof state.boundObjects[objName] == 'undefined') state.boundObjects[objName] = {}; 
     util.set(state.boundObjects[objName],binding.join('.'),getInputValueByType(this));     
     pub.bind(objName,state.boundObjects[objName]);
     this.setAttribute(changeInitiatorMarker,'true');
@@ -346,6 +375,13 @@ simpleBind = (function(w,d,util,pub){
       var originalObjName = state.repeatDictionary[objName.split('-').shift()];
       pub.bind(originalObjName,state.boundObjects[originalObjName]);
     }
+  }; 
+
+  var rateLimitInput = function() { 
+    var elem = this; 
+    util.delay(function(){
+      handleInput.call(elem);
+    },50)
   }; 
 
   var getInputType = function(elem) { 
@@ -362,9 +398,12 @@ simpleBind = (function(w,d,util,pub){
   var getInputValueByType = function(elem) { 
     var type = getInputType(elem); 
     switch(type) { 
+      case 'textarea': 
+        return elem.innerHTML;
+        break; 
       case 'checkbox': 
         return elem.checked;
-      case 'type': 
+        break; 
       default: 
         return elem.value; 
     } 
@@ -373,8 +412,9 @@ simpleBind = (function(w,d,util,pub){
   var attachAppropriateEventHandlers = function(elem,inputType) { 
     switch(inputType) { 
       case 'text':
-        elem.addEventListener('keyup',handleInput); 
-        break; 
+      case 'password':
+      case 'textarea':
+        elem.addEventListener('keyup',rateLimitInput); 
       default: 
         elem.addEventListener('change',handleInput);
         break; 
@@ -499,7 +539,9 @@ simpleBind = (function(w,d,util,pub){
         var removed = config.repeatedElems.pop(); 
         var objName  = getNewBindingName(config,config.repeatedElems.length);
         removed.parentNode.removeChild(removed);
-        if(typeof state.boundElems[objName] != 'undefined') delete state.boundElems[objName]; 
+        if(typeof state.boundElems[objName] != 'undefined') delete state.boundElems[objName];
+        if(typeof state.boundObjects[objName] != 'undefined') delete state.boundObjects[objName];
+        if(typeof state.boundObjectsLast[objName] != 'undefined') delete state.boundObjectsLast[objName];
       }
     }
   }; 
@@ -601,6 +643,38 @@ simpleBind = (function(w,d,util,pub){
   return pub; 
 })(window,document,simpleBindUtil,simpleBind||{}); 
 simpleBind = (function(w,d,util,pub){
+  var state = simpleBind.getState();
+
+  var collectionRoutine = function(elem,opts){
+    // collection routine, the function that defines the object stored in boundElems
+    var boundAttrs = opts.simplebindattrs.split(','); 
+    for(var i=0; i < boundAttrs.length; ++i) { 
+      boundAttrs[i] =  boundAttrs[i].split(':'); 
+      var configObj = { 
+        elem: elem,
+        attr: boundAttrs[i].shift() 
+      };
+      boundAttrs[i] = boundAttrs[i].shift().split('.'); 
+      configObj.objName = boundAttrs[i].shift(); 
+      configObj.objKey = boundAttrs[i].join('.'); 
+      pub.addToBoundElems('simplebindattrs',configObj.objName,configObj); 
+    }
+  }; 
+
+  var bindingRoutine = function(config,obj,flush){
+    // binding routine, the function that determines how binding is done for this bind type
+    var val = util.get(obj,config.objKey)
+      , oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey);
+    if(val != oldVal || flush) { 
+      config.elem.setAttribute(config.attr,val);
+    }
+  };
+
+  pub.registerBindType('simplebindattrs',collectionRoutine,bindingRoutine); 
+
+  return pub; 
+})(window,document,simpleBindUtil,simpleBind||{}); 
+simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
 
   // takes form: data-simpledata="thisProp:objName.objKey,otherProp:objName.objKey"
@@ -631,7 +705,7 @@ simpleBind = (function(w,d,util,pub){
   return pub; 
 })(window,document,simpleBindUtil,simpleBind||{}); 
 simpleBind = (function(w,d,pub){
-  state = pub.getState(); 
+  var state = pub.getState(); 
   state.filters = { };
   pub.getFilteredValue = function(val,filterStr) { 
     filterStr = filterStr.split(','); 

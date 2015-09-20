@@ -71,9 +71,10 @@ var simpleBind = (function(w,d,util,pub){
   var processBindings = function(objName,obj) { 
     if(typeof state.boundObjectsLast[objName] == 'undefined') state.boundObjectsLast[objName] = { }; 
     state.boundObjects[objName] = obj; 
-    processBoundElems(state.boundElems[objName],obj); 
-    
-    state.boundObjectsLast[objName] = util.extend({},obj);
+    if(typeof state.boundElems[objName] != 'undefined') { 
+      processBoundElems(state.boundElems[objName],obj); 
+      state.boundObjectsLast[objName] = util.extend({},obj);
+    }
   }; 
 
   d.addEventListener('DOMContentLoaded',function(){

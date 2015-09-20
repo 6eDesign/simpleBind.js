@@ -8,6 +8,14 @@ var simpleBindUtil = (function(pub){
     }
   }; 
 
+  pub.delay = (function(){
+    var timer = 0;
+    return function(callback, ms){
+      clearTimeout (timer);
+      timer = setTimeout(callback, ms);
+    };
+  })();
+
   pub.extend = function() { 
     for(var i=arguments.length; i > 0; --i) { 
       for(var key in arguments[i]) { 
@@ -54,13 +62,29 @@ var simpleBindUtil = (function(pub){
   // A great function for setting object values
   // via a string with dot notation:
   // ex) set({x:{y:{z:2}}},'y.z',3)
-  pub.set = function(obj,str,val) {
-    str = str.split('.');
-    while(str.length > 1) {
-      obj = obj[str.shift()];
+ 
+  // pub.set = function(obj,str,val) {
+  //   str = str.split('.');
+  //   while(str.length > 1) {
+  //     obj = obj[str.shift()];
+  //   }
+  //   obj[str.shift()] = val;
+  // };
+
+  // let's modify this function to be able to 
+  // build an object so we could have SEO friendly
+  // binds and so that people don't have to rush
+  // to bind their objects immediately
+  pub.set = function(obj,str,val) { 
+    str = str.split('.'); 
+    var finalProp = str.pop(); 
+    while(str.length) { 
+      var key = str.shift(); 
+      obj[key] = typeof obj[key] == 'undefined' ? { } : obj[key]; 
+      obj = obj[key];
     }
-    return obj[str.shift()] = val;
-  };
+    obj[finalProp] = val; 
+  }; 
 
   // Same as above but retrieves the value
   // instead of setting it:
@@ -92,20 +116,8 @@ var simpleBindUtil = (function(pub){
   pub.replaceObjNameInBindingStr = function(str,bindType,oldObj,newObj) { 
     var origStr = str + '';
     if(str.indexOf(':') > -1) { 
-      // we have either a bindhandler, simpledata, simpleevent, or simplerepeat
+      // we have either a bindhandler, simpledata, simpleevent, simplebindattrs, or simplerepeat
       switch(bindType) { 
-        case 'simplebindhandler': 
-        case 'simpledata': 
-          str = str.split(','); 
-          for(var i=0; i < str.length; ++i) { 
-            str[i] = str[i].split(':'); 
-            if(str[i].length > 1) {
-              str[i][1] = replaceObjNameInStandardFormat(str[i][1],oldObj,newObj)
-            }; 
-            str[i] = str[i].join(':');
-          }
-          str = str.join(','); 
-          break; 
         case 'simplerepeat': 
           str = str.split(':'); 
           str[1] = replaceObjNameInStandardFormat(str[1],oldObj,newObj); 
@@ -117,6 +129,20 @@ var simpleBindUtil = (function(pub){
             str[2] = replaceObjNameInStandardFormat(str[2],oldObj,newObj); 
           }
           str = str.join(':');
+          break; 
+        case 'simplebindhandler': 
+        case 'simpledata': 
+        case 'simplebindattrs':
+        default:
+          str = str.split(','); 
+          for(var i=0; i < str.length; ++i) { 
+            str[i] = str[i].split(':'); 
+            if(str[i].length > 1) {
+              str[i][1] = replaceObjNameInStandardFormat(str[i][1],oldObj,newObj)
+            }; 
+            str[i] = str[i].join(':');
+          }
+          str = str.join(','); 
           break; 
       }
     } else { 

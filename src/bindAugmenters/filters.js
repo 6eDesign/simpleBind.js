@@ -1,5 +1,5 @@
 simpleBind = (function(w,d,pub){
-  state = pub.getState(); 
+  var state = pub.getState(); 
   state.filters = { };
   pub.getFilteredValue = function(val,filterStr) { 
     filterStr = filterStr.split(','); 

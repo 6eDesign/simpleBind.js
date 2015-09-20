@@ -16,6 +16,13 @@
 			</div>
 		</div>
 		<hr>
+		<h4>Nested Repeats w/ nested data-simplebindvalue and data-simplebindattrs</h4>
+		<select data-simplebindvalue="someUndefinedObj.someProp.someProp.someProp.taskOid" data-simplerepeat="parentTask:pro.tasksForChosenZip">
+      <optgroup data-simplebindattrs="label:parentTask.description" data-simplerepeat="task:parentTask.childTasks">
+        <option data-simplebindvalue="task.taskOid" data-simplebind="task.description"></option>
+      </optgroup>
+    </select>
+		<hr>
 		<h4>Input binding</h4>
 		<input type="text" data-simplebindvalue="example.text" data-simpledata="someProp:example.text,someOtherProp:example.fakeProp"/>
     <button class="something" data-simplebind="example.text" data-simpleevent="click:exampleClickEvent:example.text"></button>

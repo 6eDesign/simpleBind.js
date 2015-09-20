@@ -70,7 +70,9 @@ simpleBind = (function(w,d,util,pub){
         var removed = config.repeatedElems.pop(); 
         var objName  = getNewBindingName(config,config.repeatedElems.length);
         removed.parentNode.removeChild(removed);
-        if(typeof state.boundElems[objName] != 'undefined') delete state.boundElems[objName]; 
+        if(typeof state.boundElems[objName] != 'undefined') delete state.boundElems[objName];
+        if(typeof state.boundObjects[objName] != 'undefined') delete state.boundObjects[objName];
+        if(typeof state.boundObjectsLast[objName] != 'undefined') delete state.boundObjectsLast[objName];
       }
     }
   }; 
