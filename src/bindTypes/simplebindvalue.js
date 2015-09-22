@@ -96,6 +96,11 @@ simpleBind = (function(w,d,util,pub){
       case 'checkbox': 
         config.elem.checked = val; 
         break; 
+      case 'textarea': 
+        if(config.elem.innerHTML != val) { 
+          config.elem.innerHTML = val; 
+        }
+        break;
       case 'text': 
       default: 
         if(val != config.elem.value || flush) { 
