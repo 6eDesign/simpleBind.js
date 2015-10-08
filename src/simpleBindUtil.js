@@ -86,8 +86,8 @@ var simpleBindUtil = (function(pub){
     obj[finalProp] = val; 
   }; 
 
-  // Same as above but retrieves the value
-  // instead of setting it:
+  // Same as above but retrieves the value as a string or as an empty string
+  // if not set: 
   pub.get = function(obj,str) {
     if(str == '$base' || str === '') return obj;
     str = str.split('.');
