@@ -88,7 +88,7 @@ simpleBind = (function(w,d,util,pub){
             break; 
           }
         }
-        config.elem.selectedIndex = i; 
+        config.elem.selectedIndex = selIndex; 
         break; 
       case 'radio': 
         config.elem.checked = val == config.elem.value; 

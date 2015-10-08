@@ -92,12 +92,18 @@ var simpleBindUtil = (function(pub){
     if(str == '$base' || str === '') return obj;
     str = str.split('.');
     for(var i=0; i < str.length; ++i) {
-      if(str[i] == '$base') { 
-        return obj; 
+      if(str[i] == '$base') {
+        return obj;
+      } else if(obj == null) {
+        return '';
       } else if(typeof obj[str[i]] == 'undefined') {
         return '';
       } else {
-        obj = obj[str[i]];
+        if(obj === null) {
+          return '';
+        } else {
+          obj = obj[str[i]];
+        }
       }
     }
     return obj;
