@@ -39,9 +39,9 @@ simpleBind = (function(w,d,util,pub){
   var getInputValueByType = function(elem) { 
     var type = getInputType(elem); 
     switch(type) { 
-      case 'textarea': 
-        return elem.innerHTML;
-        break; 
+      // case 'textarea': 
+      //   return elem.innerHTML;
+      //   break; 
       case 'checkbox': 
         return elem.checked;
         break; 
@@ -81,7 +81,7 @@ simpleBind = (function(w,d,util,pub){
     switch(config.inputType) { 
       case 'select': 
         var opts = config.elem.getElementsByTagName('option'); 
-        var selIndex = -1; 
+        var selIndex = 0; 
         for(var i=0; i < opts.length; ++i) { 
           if(opts[i].value == val) { 
             selIndex = i; 
