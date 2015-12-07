@@ -23,8 +23,9 @@ simpleBind = (function(w,d,util,pub){
     if(typeof state.bindHandlers[config.handler] != 'undefined') { 
       var val = util.get(obj,config.objKey)
         , oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
-      if(val != oldVal || flush) { 
-        state.bindHandlers[config.handler](config.elem,util.get(obj,config.objKey)); 
+      var change = typeof val == 'object' ? JSON.stringify(val) != JSON.stringify(oldVal) : val != oldVal; 
+      if(change || flush) { 
+        state.bindHandlers[config.handler](config.elem,util.get(obj,config.objKey),config.objName); 
       }
     }
   };

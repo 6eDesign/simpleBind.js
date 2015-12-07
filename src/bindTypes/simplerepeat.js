@@ -99,16 +99,23 @@ simpleBind = (function(w,d,util,pub){
 
   var bindingRoutine = function(config,obj){
     // binding routine, the function that determines how binding is done for this bind type
-    var arrToBind = util.get(obj,config.objKey) || []; 
-    if(typeof arrToBind['length'] != 'undefined') { 
-      scaleRepeat(config,arrToBind.length); 
-      for(var i=0; i < arrToBind.length; ++i) { 
-        pub.bind(getNewBindingName(config,i),arrToBind[i]); 
-      }
-    } 
+    var arrToBind = util.get(obj,config.objKey) || []
+      , oldArr = util.get(state.boundObjectsLast[config.objName],config.objKey);
+    if(JSON.stringify(arrToBind) != JSON.stringify(oldArr)) { 
+      if(typeof arrToBind['length'] != 'undefined') { 
+        scaleRepeat(config,arrToBind.length); 
+        for(var i=0; i < arrToBind.length; ++i) { 
+          pub.bind(getNewBindingName(config,i),arrToBind[i]); 
+        }
+      } 
+    }
   }; 
 
   pub.registerBindType('simplerepeat',collectionRoutine,bindingRoutine); 
+
+  pub.rewriteBindings = function(elems,originalObjName,newObjName) { 
+    rewriteBindings(elems,originalObjName,newObjName);
+  }; 
 
   return pub; 
 })(window,document,simpleBindUtil,simpleBind||{}); 

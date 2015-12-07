@@ -347,8 +347,9 @@ simpleBind = (function(w,d,util,pub){
     if(typeof state.bindHandlers[config.handler] != 'undefined') { 
       var val = util.get(obj,config.objKey)
         , oldVal = util.get(state.boundObjectsLast[config.objName],config.objKey); 
-      if(val != oldVal || flush) { 
-        state.bindHandlers[config.handler](config.elem,util.get(obj,config.objKey)); 
+      var change = typeof val == 'object' ? JSON.stringify(val) != JSON.stringify(oldVal) : val != oldVal; 
+      if(change || flush) { 
+        state.bindHandlers[config.handler](config.elem,util.get(obj,config.objKey),config.objName); 
       }
     }
   };
@@ -404,9 +405,9 @@ simpleBind = (function(w,d,util,pub){
   var getInputValueByType = function(elem) { 
     var type = getInputType(elem); 
     switch(type) { 
-      case 'textarea': 
-        return elem.innerHTML;
-        break; 
+      // case 'textarea': 
+      //   return elem.innerHTML;
+      //   break; 
       case 'checkbox': 
         return elem.checked;
         break; 
@@ -446,7 +447,7 @@ simpleBind = (function(w,d,util,pub){
     switch(config.inputType) { 
       case 'select': 
         var opts = config.elem.getElementsByTagName('option'); 
-        var selIndex = -1; 
+        var selIndex = 0; 
         for(var i=0; i < opts.length; ++i) { 
           if(opts[i].value == val) { 
             selIndex = i; 
@@ -579,16 +580,23 @@ simpleBind = (function(w,d,util,pub){
 
   var bindingRoutine = function(config,obj){
     // binding routine, the function that determines how binding is done for this bind type
-    var arrToBind = util.get(obj,config.objKey) || []; 
-    if(typeof arrToBind['length'] != 'undefined') { 
-      scaleRepeat(config,arrToBind.length); 
-      for(var i=0; i < arrToBind.length; ++i) { 
-        pub.bind(getNewBindingName(config,i),arrToBind[i]); 
-      }
-    } 
+    var arrToBind = util.get(obj,config.objKey) || []
+      , oldArr = util.get(state.boundObjectsLast[config.objName],config.objKey);
+    if(JSON.stringify(arrToBind) != JSON.stringify(oldArr)) { 
+      if(typeof arrToBind['length'] != 'undefined') { 
+        scaleRepeat(config,arrToBind.length); 
+        for(var i=0; i < arrToBind.length; ++i) { 
+          pub.bind(getNewBindingName(config,i),arrToBind[i]); 
+        }
+      } 
+    }
   }; 
 
   pub.registerBindType('simplerepeat',collectionRoutine,bindingRoutine); 
+
+  pub.rewriteBindings = function(elems,originalObjName,newObjName) { 
+    rewriteBindings(elems,originalObjName,newObjName);
+  }; 
 
   return pub; 
 })(window,document,simpleBindUtil,simpleBind||{}); 
