@@ -39,4 +39,4 @@ simpleBind = (function(w,d,util,pub){
   }; 
 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBind.util,simpleBind||{}); 

@@ -1,4 +1,4 @@
-var simpleBind = (function(w,d,util,pub){
+simpleBind = (function(w,d,util,pub){
   var state = { 
     bindTypes: [ ], 
     bindTypeOpts: { }, 
@@ -120,4 +120,4 @@ var simpleBind = (function(w,d,util,pub){
   }; 
 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBind.util,simpleBind||{}); 

@@ -35,4 +35,4 @@ simpleBind = (function(w,d,util,pub){
   };
   pub.registerBindType('simplebind',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBind.util,simpleBind||{}); 

@@ -5,6 +5,7 @@ var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 
 var simpleBindFileArray = [ 
+  'src/simpleBindNS.js',
   'src/simpleBindUtil.js',
   'src/simpleBind.2.0.js',
   'src/bindTypes/simplebind.js',

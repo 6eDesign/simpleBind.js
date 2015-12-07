@@ -1,4 +1,4 @@
-var simpleBindUtil = (function(pub){
+simpleBind.util = (function(pub){
 
   var extendProperty = function(propFrom,propTo) { 
     if(typeof propFrom == 'object' && typeof propTo == 'object') { 

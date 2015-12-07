@@ -1,4 +1,7 @@
-var simpleBindUtil = (function(pub){
+var simpleBind = (function(sb){
+	return sb; 
+})({}); 
+simpleBind.util = (function(pub){
 
   var extendProperty = function(propFrom,propTo) { 
     if(typeof propFrom == 'object' && typeof propTo == 'object') { 
@@ -161,7 +164,7 @@ var simpleBindUtil = (function(pub){
 
   return pub; 
 })({}); 
-var simpleBind = (function(w,d,util,pub){
+simpleBind = (function(w,d,util,pub){
   var state = { 
     bindTypes: [ ], 
     bindTypeOpts: { }, 
@@ -283,7 +286,7 @@ var simpleBind = (function(w,d,util,pub){
   }; 
 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBind.util,simpleBind||{}); 
 simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
 
@@ -321,7 +324,7 @@ simpleBind = (function(w,d,util,pub){
   };
   pub.registerBindType('simplebind',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBind.util,simpleBind||{}); 
 simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
   state.bindHandlers = { }; 
@@ -363,7 +366,7 @@ simpleBind = (function(w,d,util,pub){
   }; 
 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBind.util,simpleBind||{}); 
 simpleBind = (function(w,d,util,pub){
   var state = pub.getState(); 
   var changeInitiatorMarker = 'data-simplebindvaluechanger';
@@ -478,7 +481,7 @@ simpleBind = (function(w,d,util,pub){
 
   pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{});
+})(window,document,simpleBind.util,simpleBind||{});
 simpleBind = (function(w,d,util,pub){
   var state = pub.getState(); 
   state.repeatCount = 0; 
@@ -580,16 +583,13 @@ simpleBind = (function(w,d,util,pub){
 
   var bindingRoutine = function(config,obj){
     // binding routine, the function that determines how binding is done for this bind type
-    var arrToBind = util.get(obj,config.objKey) || []
-      , oldArr = util.get(state.boundObjectsLast[config.objName],config.objKey);
-    if(JSON.stringify(arrToBind) != JSON.stringify(oldArr)) { 
-      if(typeof arrToBind['length'] != 'undefined') { 
-        scaleRepeat(config,arrToBind.length); 
-        for(var i=0; i < arrToBind.length; ++i) { 
-          pub.bind(getNewBindingName(config,i),arrToBind[i]); 
-        }
-      } 
-    }
+    var arrToBind = util.get(obj,config.objKey) || []; 
+    if(typeof arrToBind['length'] != 'undefined') { 
+      scaleRepeat(config,arrToBind.length); 
+      for(var i=0; i < arrToBind.length; ++i) { 
+        pub.bind(getNewBindingName(config,i),arrToBind[i]); 
+      }
+    } 
   }; 
 
   pub.registerBindType('simplerepeat',collectionRoutine,bindingRoutine); 
@@ -599,7 +599,7 @@ simpleBind = (function(w,d,util,pub){
   }; 
 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBind.util,simpleBind||{}); 
 /*
 
   Events take the form: 'eventName:eventHandlerName:optionalObjName.key.key'
@@ -660,7 +660,7 @@ simpleBind = (function(w,d,util,pub){
   }; 
 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBind.util,simpleBind||{}); 
 simpleBind = (function(w,d,util,pub){
   var state = simpleBind.getState();
 
@@ -692,7 +692,7 @@ simpleBind = (function(w,d,util,pub){
   pub.registerBindType('simplebindattrs',collectionRoutine,bindingRoutine); 
 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBind.util,simpleBind||{}); 
 simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
 
@@ -722,7 +722,7 @@ simpleBind = (function(w,d,util,pub){
   
   pub.registerBindType('simpledata',collectionRoutine,bindingRoutine); 
   return pub; 
-})(window,document,simpleBindUtil,simpleBind||{}); 
+})(window,document,simpleBind.util,simpleBind||{}); 
 simpleBind = (function(w,d,pub){
   var state = pub.getState(); 
   state.filters = { };
