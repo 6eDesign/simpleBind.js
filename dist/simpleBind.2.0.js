@@ -2,14 +2,32 @@ var simpleBind = (function(sb){
 	return sb; 
 })({}); 
 simpleBind.util = (function(pub){
-
-  var extendProperty = function(propFrom,propTo) { 
-    if(typeof propFrom == 'object' && typeof propTo == 'object') { 
-      return pub.extend(propTo,propFrom);
-    } else { 
-      return propFrom; 
+  
+  var getType = function(variable) { 
+    var type = typeof variable; 
+    switch(type) { 
+      case 'object': 
+        return variable instanceof Array ? 'array' : type;         
+      default: 
+        return type;       
     }
   }; 
+    
+  var extend = function(args) { 
+    for(var i=1, len = args.length; i < len; ++i) { 
+      var src = args[i]
+        , target = args[0]; 
+      for(var key in src) { 
+        var simpleExtend = getType(target[key]) != 'object' && getType(src[key]) != 'object'; 
+        if(simpleExtend) { 
+          target[key] = src[key]; 
+        } else { 
+          target[key] = pub.extend(typeof target[key] == 'undefined' ? { } : target[key],src[key]); 
+        }
+      }
+    }    
+    return args.length ? args[0] : { }; 
+  };
 
   pub.delay = (function(){
     var timer = 0;
@@ -18,14 +36,9 @@ simpleBind.util = (function(pub){
       timer = setTimeout(callback, ms);
     };
   })();
-
+  
   pub.extend = function() { 
-    for(var i=arguments.length; i > 0; --i) { 
-      for(var key in arguments[i]) { 
-        arguments[i-1][key] = extendProperty(arguments[i][key],arguments[i-1][key]); 
-      }
-    }
-    return arguments[0];
+    return extend(arguments);
   };
 
   pub.getKeys = function(obj) {
@@ -158,7 +171,6 @@ simpleBind.util = (function(pub){
       // we have a simplebind or simplebindvalue
       str = replaceObjNameInStandardFormat(str,oldObj,newObj); 
     }
-    // console.log('replacing "' + oldObj+'" with "' + newObj + '" in "' + origStr + '".','returning:',str); 
     return str; 
   }; 
 
