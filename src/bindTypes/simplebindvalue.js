@@ -91,10 +91,10 @@ simpleBind = (function(w,d,util,pub){
         config.elem.selectedIndex = selIndex; 
         break; 
       case 'radio': 
-        config.elem.checked = val == config.elem.value; 
+        config.elem.checked = String(val) == config.elem.value; 
         break; 
       case 'checkbox': 
-        config.elem.checked = val; 
+        config.elem.checked = (val === true || val == 'true'); 
         break; 
       case 'textarea': 
         if(config.elem.innerHTML != val) { 
