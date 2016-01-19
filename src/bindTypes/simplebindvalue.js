@@ -36,20 +36,33 @@ simpleBind = (function(w,d,util,pub){
     }
   };
 
+  var checkIfInputValueChanged = function(input,currVal) {
+    var type = getInputType(input); 
+    // console.log(input,'currVal',currVal,'newVal?',val,'checked?',input.checked);
+    switch(type) { 
+      case 'checkbox': 
+        return String(input.checked) != String(currVal);
+        return false;
+      case 'radio':
+        var radioVal = getInputValueByType(input);
+        return (input.checked && radioVal != String(currVal)) || (!input.checked && radioVal == String(currVal));
+      default: 
+        var val = getInputValueByType(input); 
+        return currVal != val;
+    }    
+  }; 
+
+  /* todo: this function seems like it needs some work around radio inputs */
   var getInputValueByType = function(elem) { 
     var type = getInputType(elem); 
-    switch(type) { 
-      // case 'textarea': 
-      //   return elem.innerHTML;
-      //   break; 
+    switch(type) {
       case 'checkbox': 
         return elem.checked;
-        break; 
       default: 
         return elem.value; 
     } 
   }; 
-
+  
   var attachAppropriateEventHandlers = function(elem,inputType) { 
     switch(inputType) { 
       case 'text':
@@ -69,7 +82,8 @@ simpleBind = (function(w,d,util,pub){
       elem: elem,
       objName: opts.simplebindvalue.shift(), 
       objKey: opts.simplebindvalue.join('.'), 
-      inputType: getInputType(elem)
+      inputType: getInputType(elem), 
+      initiatedChange: false
     }; 
     attachAppropriateEventHandlers(elem,configObj.inputType);
     pub.addToBoundElems('simplebindvalue',configObj.objName,configObj); 
@@ -77,38 +91,52 @@ simpleBind = (function(w,d,util,pub){
 
   var bindingRoutine = function(config,obj,flush){
     // binding routine, the function that determines how binding is done for this bind type
-    var val = util.get(obj,config.objKey);
-    switch(config.inputType) { 
-      case 'select': 
-        var opts = config.elem.getElementsByTagName('option'); 
-        var selIndex = 0; 
-        for(var i=0; i < opts.length; ++i) { 
-          if(opts[i].value == val) { 
-            selIndex = i; 
-            break; 
+    var val = util.get(obj,config.objKey); 
+    if(checkIfInputValueChanged(config.elem,val)) { 
+      switch(config.inputType) { 
+        case 'select': 
+          var opts = config.elem.getElementsByTagName('option'); 
+          var selIndex = 0; 
+          for(var i=0; i < opts.length; ++i) { 
+            if(opts[i].value == val) { 
+              selIndex = i; 
+              break; 
+            }
           }
-        }
-        config.elem.selectedIndex = selIndex; 
-        break; 
-      case 'radio': 
-        config.elem.checked = String(val) == config.elem.value; 
-        break; 
-      case 'checkbox': 
-        config.elem.checked = (val === true || val == 'true'); 
-        break; 
-      case 'textarea': 
-        if(config.elem.innerHTML != val) { 
-          config.elem.innerHTML = val; 
-        }
-        break;
-      case 'text': 
-      default: 
-        if(val != config.elem.value || flush) { 
-          config.elem.value = val; 
-        }
-        break; 
+          config.elem.selectedIndex = selIndex; 
+          break; 
+        case 'radio': 
+          config.elem.checked = String(val) == config.elem.value; 
+          break; 
+        case 'checkbox': 
+          config.elem.checked = (val === true || val == 'true'); 
+          break; 
+        case 'textarea': 
+          if(config.elem.innerHTML != val) { 
+            config.elem.innerHTML = val; 
+          }
+          break;
+        case 'text': 
+        default: 
+          if(val != config.elem.value || flush) { 
+            config.elem.value = val; 
+          }
+          break; 
+      }
+      
+      triggerEvent(config.elem,'change'); 
     }
   };
+  
+  var triggerEvent = function(elem,type){
+    if('createEvent' in d) { 
+      var evt = d.createEvent('HTMLEvents'); 
+      evt.initEvent(type,false,true); 
+      elem.dispatchEvent(evt); 
+    } else { 
+      elem.fireEvent('on' + type); 
+    }
+  }; 
 
   pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine); 
   return pub; 
