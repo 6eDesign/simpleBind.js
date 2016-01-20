@@ -40,6 +40,16 @@
               <input type="text" data-simplebindvalue="item.prop2" />
 	            <span data-simplebind="item.prop2"></span>
           	</div>
+            <div>
+              <h4>Binding multiple inputs to same value with single change event on checkbox:</h4>
+              <input type="checkbox" data-simplebindvalue="item.value" data-simpleevent="change:checkboxChecked" />
+              <label>
+                <input type="radio" data-simplebindvalue="item.value" value="true" /> True
+              </label>
+              <label>
+                <input type="radio" data-simplebindvalue="item.value" value="false" /> False
+              </label>
+            </div>
         </li>
 	    </ul>
 		</div>

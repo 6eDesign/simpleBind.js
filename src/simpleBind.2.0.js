@@ -108,7 +108,8 @@ simpleBind = (function(w,d,util,pub){
     domCollection(context,autoReBind);
   }; 
 
-  pub.bind = function(objName,obj) { 
+  pub.bind = function(objName,obj) {
+    console.log('simpleBind.bind called with ', objName, obj); 
     if(typeof objName == 'string' && typeof obj == 'object') {
       if(typeof state.boundElems[objName] == 'undefined') state.boundElems[objName] = [];
       if(state.ready) { 

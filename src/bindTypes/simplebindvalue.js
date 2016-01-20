@@ -9,7 +9,7 @@ simpleBind = (function(w,d,util,pub){
       , objName = binding.shift(); 
     // in case this object hasn't been set yet, for whatever reason, set it to a blank object:
     if(typeof state.boundObjects[objName] == 'undefined') state.boundObjects[objName] = {}; 
-    util.set(state.boundObjects[objName],binding.join('.'),getInputValueByType(this));     
+    util.set(state.boundObjects[objName],binding.join('.'),getInputValue(this));     
     pub.bind(objName,state.boundObjects[objName]);
     this.setAttribute(changeInitiatorMarker,'true');
     if(objName.indexOf('__repeat') > -1) { 
@@ -38,22 +38,22 @@ simpleBind = (function(w,d,util,pub){
 
   var checkIfInputValueChanged = function(input,currVal) {
     var type = getInputType(input); 
-    // console.log(input,'currVal',currVal,'newVal?',val,'checked?',input.checked);
+    // for checkboxes and radio inputs, it is necessary to account for 
+    // string vs boolean comparisons since the value attribute on an 
+    // input is always a string: 
     switch(type) { 
       case 'checkbox': 
         return String(input.checked) != String(currVal);
         return false;
       case 'radio':
-        var radioVal = getInputValueByType(input);
+        var radioVal = getInputValue(input);
         return (input.checked && radioVal != String(currVal)) || (!input.checked && radioVal == String(currVal));
       default: 
-        var val = getInputValueByType(input); 
-        return currVal != val;
+        return currVal != getInputValue(input);
     }    
   }; 
 
-  /* todo: this function seems like it needs some work around radio inputs */
-  var getInputValueByType = function(elem) { 
+  var getInputValue = function(elem) { 
     var type = getInputType(elem); 
     switch(type) {
       case 'checkbox': 
@@ -92,7 +92,8 @@ simpleBind = (function(w,d,util,pub){
   var bindingRoutine = function(config,obj,flush){
     // binding routine, the function that determines how binding is done for this bind type
     var val = util.get(obj,config.objKey); 
-    if(checkIfInputValueChanged(config.elem,val)) { 
+    if(!config.initiatedChange && checkIfInputValueChanged(config.elem,val)) { 
+      config.initiatedChange = true;
       switch(config.inputType) { 
         case 'select': 
           var opts = config.elem.getElementsByTagName('option'); 
@@ -125,6 +126,7 @@ simpleBind = (function(w,d,util,pub){
       }
       
       triggerEvent(config.elem,'change'); 
+      config.initiatedChange = false;
     }
   };
   

@@ -7,33 +7,42 @@ simpleBind.registerEvent('alertHello',function(evt,value){
 simpleBind.registerEvent('exampleClickEvent',function(val){
   console.log(this,val);
 }); 
+simpleBind.registerEvent('checkboxChecked',function(){
+  console.log('checkbox checked');
+});
 var example = {
   text: 'hello world',
   arrays: { 
     items: [ 
       { 
         prop1: Math.round(Math.random()*10), 
-        prop2: ''
+        prop2: '', 
+        value: true
       },
       { 
         prop1: Math.round(Math.random()*10), 
-        prop2: ''
+        prop2: '', 
+        value: false
       },
       { 
         prop1: Math.round(Math.random()*10), 
-        prop2: ''
+        prop2: '', 
+        value: true
       },
       { 
         prop1: Math.round(Math.random()*10), 
-        prop2: ''
+        prop2: '', 
+        value: false
       },
       { 
         prop1: Math.round(Math.random()*10), 
-        prop2: ''
+        prop2: '', 
+        value: true
       },  
       { 
         prop1: Math.round(Math.random()*10), 
-        prop2: ''
+        prop2: '', 
+        value: false
       }
     ]
   }

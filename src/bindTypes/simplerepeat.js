@@ -97,7 +97,7 @@ simpleBind = (function(w,d,util,pub){
     pub.addToBoundElems('simplerepeat',configObj.objName,configObj); 
   };
 
-  var bindingRoutine = function(config,obj){
+  var bindingRoutine = function(config,obj,flush){
     // binding routine, the function that determines how binding is done for this bind type
     var arrToBind = util.get(obj,config.objKey) || []; 
     if(typeof arrToBind['length'] != 'undefined') { 
