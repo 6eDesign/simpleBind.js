@@ -109,7 +109,6 @@ simpleBind = (function(w,d,util,pub){
   }; 
 
   pub.bind = function(objName,obj) {
-    console.log('simpleBind.bind called with ', objName, obj); 
     if(typeof objName == 'string' && typeof obj == 'object') {
       if(typeof state.boundElems[objName] == 'undefined') state.boundElems[objName] = [];
       if(state.ready) { 

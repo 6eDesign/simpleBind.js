@@ -1,4 +1,4 @@
-simpleBind.util = (function(pub){
+simpleBind.util = (function(d,pub){
   
   var getType = function(variable) { 
     var type = typeof variable; 
@@ -171,5 +171,15 @@ simpleBind.util = (function(pub){
     return str; 
   }; 
 
+  pub.triggerEvent = function(elem,type){
+    if('createEvent' in d) { 
+      var evt = d.createEvent('HTMLEvents'); 
+      evt.initEvent(type,false,true); 
+      elem.dispatchEvent(evt); 
+    } else { 
+      elem.fireEvent('on' + type); 
+    }
+  }; 
+
   return pub; 
-})({}); 
+})(document,{}); 

@@ -7,9 +7,7 @@ simpleBind.registerEvent('alertHello',function(evt,value){
 simpleBind.registerEvent('exampleClickEvent',function(val){
   console.log(this,val);
 }); 
-simpleBind.registerEvent('checkboxChecked',function(){
-  console.log('checkbox checked');
-});
+
 var example = {
   text: 'hello world',
   arrays: { 
@@ -93,6 +91,9 @@ document.addEventListener('DOMContentLoaded',function(){
   simpleBind.bind('example',example);
   simpleBind.bind('arrayObject',arrayExample);  
   simpleBind.bind('pro',pro);
+  simpleBind.registerEvent('checkboxChecked',function(){
+    console.log('checkbox checked');
+  });
 }); 
 
 
