@@ -149,7 +149,11 @@ simpleBind = (function(w,d,util,pub){
         config.elem.setAttribute(eventDispatchMarker,'true');        
         util.triggerEvent(config.elem,'change');
       }
-    }
+    } else { 
+			if(config.elem.getAttribute(changeInitiatorMarker)) {
+				config.elem.removeAttribute(changeInitiatorMarker); 
+			}
+		}
   };
 
   pub.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine); 
