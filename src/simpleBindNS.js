@@ -1,3 +1,3 @@
 var simpleBind = (function(sb){
-	return sb; 
-})({}); 
+	return sb;
+})(simpleBind||{});

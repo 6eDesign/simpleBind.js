@@ -1,6 +1,6 @@
 var simpleBind = (function(sb){
-	return sb; 
-})({}); 
+	return sb;
+})(simpleBind||{});
 simpleBind.util = (function(d,pub){
 
   var getType = function(variable) {
