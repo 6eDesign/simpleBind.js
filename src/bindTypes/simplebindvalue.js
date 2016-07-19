@@ -58,7 +58,8 @@ simpleBind = (function(w,d,util,pub){
     switch(type) {
       case 'checkbox':
         return String(input.checked) != String(currVal);
-        return false;
+      case 'range': 
+        return String(input.getAttribute('data-range-value-actual')) != String(currVal);
       case 'radio':
         var radioVal = getInputValue(input);
         return (input.checked && radioVal != String(currVal)) || (!input.checked && radioVal == String(currVal));
@@ -103,6 +104,17 @@ simpleBind = (function(w,d,util,pub){
         }
         config.elem.selectedIndex = selIndex;
         break;
+      case 'range': 
+        // range demonstrates some interesting behavior.. 
+        // it won't accept values outside of min/max even when set programatically
+        config.elem.setAttribute('data-range-value-actual',val);
+        if(config.elem.min && parseFloat(val) < parseFloat(config.elem.min)) { 
+          config.elem.value = config.elem.min; 
+        } else if(config.elem.max && parseFloat(val) > parseFloat(config.elem.max)) { 
+          config.elem.value = config.elem.max;
+        } else { 
+          config.elem.value = val; 
+        }
       case 'radio':
         config.elem.checked = String(val) == config.elem.value;
         break;
