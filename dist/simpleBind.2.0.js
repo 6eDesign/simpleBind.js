@@ -471,6 +471,10 @@ simpleBind = (function(w,d,util,pub){
 
   var attachAppropriateEventHandlers = function(elem,inputType) {
     switch(inputType) {
+      case 'range': 
+        elem.addEventListener('input',rateLimitInput);
+        elem.addEventListener('change',handleInput);
+        break; 
       case 'text':
       case 'password':
       case 'textarea':
