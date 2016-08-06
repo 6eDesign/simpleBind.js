@@ -349,7 +349,6 @@ simpleBind = (function(w,d,util,pub){
 })(window,document,simpleBind.util,simpleBind||{});
 simpleBind = (function(w,d,util,pub){
   var state = pub.getState();
-  console.log('i\'m on your page');
   var collectionRoutine = function(elem,opts){
     // collection routine, the function that defines the object stored in boundElems
     opts.simpleeditable = opts.simpleeditable.split('.');
