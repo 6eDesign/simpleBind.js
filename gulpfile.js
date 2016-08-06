@@ -9,6 +9,7 @@ var simpleBindFileArray = [
   'src/simpleBindUtil.js',
   'src/simpleBind.2.0.js',
   'src/bindTypes/simplebind.js',
+  'src/bindTypes/editable.js',
   'src/bindTypes/simplebindhandler.js',
   'src/bindTypes/simplebindvalue.js',
   'src/bindTypes/simplerepeat.js',
