@@ -10,12 +10,12 @@ var simpleBindFileArray = [
   'src/simpleBind.2.0.js',
   'src/bindTypes/simplebind.js',
   'src/bindTypes/simplebindhandler.js',
+  'src/bindTypes/simplebindvalue.js',
   'src/bindTypes/simplerepeat.js',
   'src/bindTypes/simpleevent.js',
   'src/bindTypes/simplebindattrs.js',
   'src/bindTypes/simpledata.js',
-  'src/bindAugmenters/filters.js',
-  'src/bindTypes/simplebindvalue.js'
+  'src/bindAugmenters/filters.js'
 ]; 
 
 var jsHintOpts = { 
