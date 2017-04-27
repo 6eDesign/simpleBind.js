@@ -7,6 +7,7 @@ simpleBind.util = (function(d,pub){
     var type = typeof variable;
     switch(type) {
       case 'object':
+        if(variable == null) return 'null';
         return variable instanceof Array ? 'array' : type;
       default:
         return type;
