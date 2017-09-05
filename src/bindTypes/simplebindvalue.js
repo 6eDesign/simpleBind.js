@@ -80,6 +80,7 @@ simpleBind = (function(w,d,util,pub){
   var attachAppropriateEventHandlers = function(elem,inputType) {
     switch(inputType) {
       case 'text':
+      case 'tel':
       case 'password':
       case 'textarea':
       case 'zip':
