@@ -86,6 +86,7 @@ simpleBind = (function(w,d,util,pub){
       case 'number': 
       case 'email': 
       case 'zip':
+      case 'time':
         elem.addEventListener('keyup',rateLimitInput);
       default:
         elem.addEventListener('change',handleInput);

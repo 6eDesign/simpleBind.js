@@ -23,7 +23,7 @@
     "url": "https://github.com/6eDesign/simpleBind.js/issues"
   },
   "homepage": "https://github.com/6eDesign/simpleBind.js#readme",
-  "optionaldependencies": {
+  "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-jshint": "^1.11.2",
