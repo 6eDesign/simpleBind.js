@@ -17,9 +17,12 @@
 		</div>
 		<hr>
 		<h4>Nested Repeats w/ nested data-simplebindvalue and data-simplebindattrs</h4>
-		<select data-simplebindvalue="someUndefinedObj.someProp.someProp.someProp.taskOid" data-simplerepeat="parentTask:pro.tasksForChosenZip">
-      <optgroup data-simplebindattrs="label:parentTask.description" data-simplerepeat="task:parentTask.childTasks">
-        <option data-simplebindvalue="task.taskOid" data-simplebind="task.description"></option>
+		<select data-simplebindvalue="someUndefinedObj.someProp.someProp.someProp.taskOid" 
+						data-simplerepeat="parentTask:pro.tasksForChosenZip">
+			<optgroup data-simplebindattrs="label:parentTask.description" 
+								data-simplerepeat="task:parentTask.childTasks">
+				<option data-simplebindvalue="task.taskOid" 
+								data-simplebind="task.description"></option>
       </optgroup>
     </select>
 		<hr>
@@ -61,7 +64,7 @@
 		<hr>
 		<h4>Contents of 'example' object:</h4>
 		<div>
-			<pre data-simplebind="example.$base"></pre>
+			<pre data-simplebind="example"></pre>
 		</div>
 		<hr>
 		<h4>Simple event</h4>
@@ -69,7 +72,7 @@
 			button should alert "hello world + ${example.text}"
 			<button data-simpleevent="click:alertHello:example.text">Click Me</button>
 		</div>
-		<script type="text/javascript" src="dist/simpleBind.2.0.js"></script>
+		<script type="text/javascript" src="dist/simpleBind.umd.js"></script>
 		<script type="text/javascript" src="test/test-demo.js"></script>
 	</body>
 </html>

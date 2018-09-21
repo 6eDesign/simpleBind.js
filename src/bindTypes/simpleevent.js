@@ -1,3 +1,6 @@
+import state from '../state';
+import simpleBind from '../simpleBind';
+
 /*
 
   Events take the form: 'eventName:eventHandlerName:optionalObjName.key.key'
@@ -21,47 +24,43 @@
 
 */
 
-simpleBind = (function(w,d,util,pub){
-  var state = pub.getState();
-  state.eventHandlers = { };
+state.eventHandlers = { };
 
-  var addListener = function(elem,eventName,eventHandler,includeObjNameAndKey,objName,objKey) {
-    elem.addEventListener(eventName,function(evt){
-      if(typeof state.eventHandlers[eventHandler] != 'undefined') {
-        if(includeObjNameAndKey) {
-          if(typeof state.boundObjects[objName] != 'undefined') {
-            state.eventHandlers[eventHandler].call(this,evt,util.get(state.boundObjects[objName],objKey));
-            return;
-          }
+var addListener = function(elem,eventName,eventHandler,includeObjNameAndKey,objName,objKey) {
+  elem.addEventListener(eventName,function(evt){
+    if(typeof state.eventHandlers[eventHandler] != 'undefined') {
+      if(includeObjNameAndKey) {
+        if(typeof state.boundObjects[objName] != 'undefined') {
+          state.eventHandlers[eventHandler].call(this,evt, simpleBind.util.get(state.boundObjects[objName],objKey));
+          return;
         }
-        // still call the event handler even if it obj is undefined
-        return state.eventHandlers[eventHandler].call(this,evt,undefined);
       }
-    });
-  };
-
-  var collectionRoutine = function(elem,opts) {
-    var events = opts.simpleevent.split(',');
-    for(var i=0; i < events.length; ++i) {
-      var eventArr = events[i].split(':')
-        , eventName = eventArr.shift()
-        , eventHandler = eventArr.shift();
-      var objNameAndKey = eventArr.length ? eventArr.shift().split('.') : false;
-      if(objNameAndKey) {
-        var objName = objNameAndKey.shift()
-          , objKey = objNameAndKey.join('.');
-          addListener(elem,eventName,eventHandler,objNameAndKey,objName,objKey);
-      } else {
-        addListener(elem,eventName,eventHandler,objNameAndKey);
-      }
+      // still call the event handler even if it obj is undefined
+      return state.eventHandlers[eventHandler].call(this,evt,undefined);
     }
-  };
+  });
+};
 
-  pub.registerBindType('simpleevent',collectionRoutine,null);
+var collectionRoutine = function(elem,opts) {
+  var events = opts.simpleevent.split(',');
+  for(var i=0; i < events.length; ++i) {
+    var eventArr = events[i].split(':')
+      , eventName = eventArr.shift()
+      , eventHandler = eventArr.shift();
+    var objNameAndKey = eventArr.length ? eventArr.shift().split('.') : false;
+    if(objNameAndKey) {
+      var objName = objNameAndKey.shift()
+        , objKey = objNameAndKey.join('.');
+        addListener(elem,eventName,eventHandler,objNameAndKey,objName,objKey);
+    } else {
+      addListener(elem,eventName,eventHandler,objNameAndKey);
+    }
+  }
+};
 
-  pub.registerEvent = function(eventName,func) {
-    state.eventHandlers[eventName] = func;
-  };
+var registerEvent = function(eventName,func) {
+  state.eventHandlers[eventName] = func;
+};
 
-  return pub;
-})(window,document,simpleBind.util,simpleBind||{});
+simpleBind.registerBindType('simpleevent',collectionRoutine,null);
+simpleBind.extendNamespace('registerEvent', registerEvent);
