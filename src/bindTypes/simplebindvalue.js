@@ -83,7 +83,10 @@ var attachAppropriateEventHandlers = function(elem,inputType) {
     case 'tel':
     case 'password':
     case 'textarea':
+    case 'number': 
+    case 'email': 
     case 'zip':
+    case 'time':
       elem.addEventListener('keyup',rateLimitInput);
     default:
       elem.addEventListener('change',handleInput);
