@@ -2,9 +2,9 @@ import * as util from './simpleBindUtil';
 import state from './state';
 
 const useDevTools = typeof window.__REDUX_DEVTOOLS_EXTENSION__ != 'undefined'; 
-
+var devTools;
 if(useDevTools) { 
-  const devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({latency: 0});
+  devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({latency: 0});
   devTools.subscribe((message,...args) => {
     if (message.type === 'DISPATCH' && message.state) {
       // console.log(args,'DevTools requested to change the state to', message.state);

@@ -210,10 +210,10 @@
   };
 
   var useDevTools = typeof window.__REDUX_DEVTOOLS_EXTENSION__ != 'undefined'; 
-
+  var devTools;
   if(useDevTools) { 
-    var devTools$1 = window.__REDUX_DEVTOOLS_EXTENSION__.connect({latency: 0});
-    devTools$1.subscribe(function (message) {
+    devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({latency: 0});
+    devTools.subscribe(function (message) {
       var args = [], len = arguments.length - 1;
       while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
 
