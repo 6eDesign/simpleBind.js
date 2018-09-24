@@ -6,7 +6,7 @@
   "module": "dist/simpleBind.esm.js",
   "browser": "dist/simpleBind.umd.js",
   "scripts": {
-    "build": "node_modules/.bin/rollup -c",
+    "build": "env buildTarget=prod node_modules/.bin/rollup -c",
     "dev": "node_modules/.bin/rollup -c -w",
     "test": "sh scripts/runTests.sh",
     "pretest": "npm run build"
@@ -15,6 +15,7 @@
   "devDependencies": {
     "faucet": "0.0.1",
     "rollup": "^0.66.0",
+    "rollup-plugin-buble": "^0.19.2",
     "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^6.0.0",

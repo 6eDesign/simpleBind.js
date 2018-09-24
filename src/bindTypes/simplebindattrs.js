@@ -1,7 +1,8 @@
 import state from '../state';
 import simpleBind from '../simpleBind';
+import { COLON_SEPARATED_SECOND_GROUP } from './const/objNameLocation';
 
-var collectionRoutine = function(elem,opts){
+var collection = function(elem,opts){
   // collection routine, the function that defines the object stored in boundElems
   var boundAttrs = opts.simplebindattrs.split(',');
   for(var i=0; i < boundAttrs.length; ++i) {
@@ -17,7 +18,7 @@ var collectionRoutine = function(elem,opts){
   }
 };
 
-var bindingRoutine = function(config,obj,flush){
+var binding = function(config,obj,flush){
   // binding routine, the function that determines how binding is done for this bind type
   var val = simpleBind.util.get(obj,config.objKey)
     , oldVal = simpleBind.util.get(state.boundObjectsLast[config.objName],config.objKey);
@@ -26,4 +27,8 @@ var bindingRoutine = function(config,obj,flush){
   }
 };
 
-simpleBind.registerBindType('simplebindattrs',collectionRoutine,bindingRoutine);
+simpleBind.registerBindType('simplebindattrs',{
+  collection,
+  binding,
+  objNameLocation: COLON_SEPARATED_SECOND_GROUP
+});

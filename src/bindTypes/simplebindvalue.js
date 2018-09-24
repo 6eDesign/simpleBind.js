@@ -1,5 +1,6 @@
 import state from '../state';
 import simpleBind from '../simpleBind';
+import { FIRST_IN_STRING } from './const/objNameLocation';
 
 // define two flags that are used to help us determine flow/bubbling and prevent indefinite recursion: 
 //  1. eventDispatchMarker: this is applied when we programatically trigger a change event on an input
@@ -12,24 +13,19 @@ var eventDispatchMarker = 'data-simpleeventdispatch'
  */
 var handleInput = function() {
   // check if we are simply dispatching an event from the bindingRoutine callback
-  if(this.getAttribute(eventDispatchMarker)) {
-    // we are
-    this.removeAttribute(eventDispatchMarker);
-  } else {
-    // we are not, we need to update other items that are bound to same object.property: 
-    var binding = this.getAttribute('data-simplebindvalue').split('.')
-      , objName = binding.shift();
-    // in case this object hasn't been set yet, for whatever reason, set it to a blank object:
-    if(typeof state.boundObjects[objName] == 'undefined') state.boundObjects[objName] = {};
-    simpleBind.util.set(state.boundObjects[objName],binding.join('.'),getInputValue(this));
-    simpleBind.bind(objName,state.boundObjects[objName]);
-    this.setAttribute(changeInitiatorMarker,'true');
-    if(objName.indexOf('__repeat') > -1) {
-      var originalObjName = state.repeatDictionary[objName.split('-').shift()];
-      simpleBind.bind(originalObjName,state.boundObjects[originalObjName]);
-    }
+  if(this.getAttribute(eventDispatchMarker)) return this.removeAttribute(eventDispatchMarker);
+  // we are not, we need to update other items that are bound to same object.property: 
+  var binding = this.getAttribute('data-simplebindvalue').split('.')
+    , objName = binding.shift();
+  // in case this object hasn't been set yet, for whatever reason, set it to a blank object:
+  if(typeof state.boundObjects[objName] == 'undefined') state.boundObjects[objName] = {};
+  this.setAttribute(changeInitiatorMarker,'true');
+  simpleBind.util.set(state.boundObjects[objName],binding.join('.'),getInputValue(this));
+  simpleBind.bind(objName,state.boundObjects[objName]);
+  if(objName.indexOf('__repeat') > -1) {
+    var originalObjName = state.repeatDictionary[objName.split('-').shift()];
+    simpleBind.bind(originalObjName,state.boundObjects[originalObjName]);
   }
-
 };
 
 var rateLimitInput = function() {
@@ -127,7 +123,7 @@ var setValue = function(config,val) {
   }
 };
 
-var collectionRoutine = function(elem,opts){
+var collection = function(elem,opts){
   // collection routine, the function that defines the object stored in boundElems
   opts.simplebindvalue = opts.simplebindvalue.split('.');
   var configObj = {
@@ -141,7 +137,7 @@ var collectionRoutine = function(elem,opts){
   simpleBind.addToBoundElems('simplebindvalue',configObj.objName,configObj);
 };
 
-var bindingRoutine = function(config,obj,flush){
+var binding = function(config,obj,flush){
   // binding routine, the function that determines how binding is done for this bind type
   var val = simpleBind.util.get(obj,config.objKey);
   if(checkIfInputValueChanged(config.elem,val)) {
@@ -161,4 +157,10 @@ var bindingRoutine = function(config,obj,flush){
   }
 };
 
-simpleBind.registerBindType('simplebindvalue',collectionRoutine,bindingRoutine);
+// uses default objNameRegex
+
+simpleBind.registerBindType('simplebindvalue',{
+  collection,
+  binding,
+  objNameLocation: FIRST_IN_STRING
+});

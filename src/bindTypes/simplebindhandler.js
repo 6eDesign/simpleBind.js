@@ -1,13 +1,14 @@
 import state from '../state';
 import simpleBind from '../simpleBind';
+import { COLON_SEPARATED_SECOND_GROUP } from './const/objNameLocation';
 
 state.bindHandlers = { };
 
-var collectionRoutine = function(elem,opts){
+var collection = function(elem,opts){
   // collection routine, the function that defines the object stored in boundElems
   var bindHandlers = opts.simplebindhandler.split(',');
   for(var i=0; i < bindHandlers.length; ++i) {
-    bindHandlers[i] =  bindHandlers[i].split(':');
+    bindHandlers[i] = bindHandlers[i].split(':');
     var configObj = {
       elem: elem,
       handler: bindHandlers[i].shift()
@@ -19,7 +20,7 @@ var collectionRoutine = function(elem,opts){
   }
 };
 
-var bindingRoutine = function(config,obj,flush){
+var binding = function(config,obj,flush){
   // binding routine, the function that determines how binding is done for this bind type
   if(typeof state.bindHandlers[config.handler] != 'undefined') {
     var val = simpleBind.util.get(obj,config.objKey)
@@ -37,5 +38,10 @@ var registerBindHandler = function(handlerName,func) {
   }
 };
 
-simpleBind.registerBindType('simplebindhandler', collectionRoutine,bindingRoutine);
+
+simpleBind.registerBindType('simplebindhandler', {
+  collection,
+  binding,
+  objNameLocation: COLON_SEPARATED_SECOND_GROUP
+});
 simpleBind.extendNamespace('registerBindHandler', registerBindHandler);

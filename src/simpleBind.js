@@ -1,6 +1,19 @@
 import * as util from './simpleBindUtil';
 import state from './state';
 
+const devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({latency: 0});
+devTools.subscribe((message,...args) => {
+  if (message.type === 'DISPATCH' && message.state) {
+    // console.log(args,'DevTools requested to change the state to', message.state);
+    let newState = JSON.parse(message.state); 
+    for(var key in newState) {
+      state.isBindDueToDevTools = true;
+      lib.bind(key,newState[key]);
+    }
+  }
+});
+
+
 var d = document;
 
 var init = function() { 
@@ -13,8 +26,7 @@ var init = function() {
   }
 }; 
 
-var domCollection = function(base,autoReBind) { 
-  autoReBind = (typeof autoReBind == 'undefined') ? false : autoReBind; 
+var domCollection = function(base,autoReBind=false) { 
   if(autoReBind) { 
     state.autoReBinding = true; 
     state.autoReBindingQueue = { }; 
@@ -81,13 +93,16 @@ lib.getState = function() {
   return state;
 }; 
 
-lib.registerBindType = function(selector,collectionRoutine,bindingRoutine) { 
+let defaultBindTypeOpts = { 
+  binding: null
+}; 
+
+lib.registerBindType = function(selector,opts) { 
   if(typeof state.bindTypeOpts[selector] == 'undefined') { 
     state.bindTypeOpts[selector] = { }; 
     state.bindTypes.push(selector); 
   }
-  state.bindTypeOpts[selector].collection = collectionRoutine; 
-  state.bindTypeOpts[selector].binding = bindingRoutine; 
+  util.extend(state.bindTypeOpts[selector],defaultBindTypeOpts,opts);
 }; 
 
 lib.addToBoundElems = function(bindType,objName,configObj) { 
@@ -104,11 +119,25 @@ lib.recollectDOM = function(context,autoReBind) {
   domCollection(context,autoReBind);
 }; 
 
+let isARepeatKey = name => name.indexOf('__repeat') == 0;
+
+let removeRepeatsFromState = obj => { 
+  let newObj = util.extend({},state.boundObjects); 
+  Object.keys(newObj).filter(isARepeatKey).forEach(k => delete newObj[k]);
+  return newObj;
+}; 
+
 lib.bind = function(objName,obj) {
-  if(typeof objName == 'string' && typeof obj == 'object') {
+  if(typeof objName == 'string' && typeof obj != 'undefined') {
     if(typeof state.boundElems[objName] == 'undefined') state.boundElems[objName] = [];
     if(state.ready) { 
+      var eligibleForDevTools = state.isBindDueToDevTools == false; 
+      if(state.isBindDueToDevTools) state.isBindDueToDevTools = false;
       processBindings(objName,obj);
+      if(!eligibleForDevTools) return;
+      if(!isARepeatKey(objName)) {
+        devTools.send(`${objName}-bound`, removeRepeatsFromState(state.boundObjects))
+      } 
     } else { 
       state.beforeReadyBindQueue.push({name: objName, obj: obj});
     }

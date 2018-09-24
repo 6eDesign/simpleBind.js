@@ -1,4 +1,4 @@
-var d = document;
+import * as objNameLocations from './bindTypes/const/objNameLocation';
 
 var getType = function(variable) {
   var type = typeof variable;
@@ -10,6 +10,14 @@ var getType = function(variable) {
       return type;
   }
 };
+
+export var delay = (function(){
+  var timer = 0;
+  return function(callback, ms){
+    clearTimeout (timer);
+    timer = setTimeout(callback, ms);
+  };
+})();
 
 var copyArrayWithoutReferences = function (arr) {
   var toReturn = [];
@@ -30,10 +38,10 @@ var copyArrayWithoutReferences = function (arr) {
   return toReturn;
 };
 
-var extendWithArrayOfObjects = function(args) {
-  for (var i = 1, len = args.length; i < len; ++i) {
-    var src = args[i]
-      , target = args[0];
+export var extend = function() {
+  for (var i = 1, len = arguments.length; i < len; ++i) {
+    var src = arguments[i]
+      , target = arguments[0];
     for (var key in src) {
       var isArrayPresent = getType(src[key]) === 'array';
       var simpleExtend = getType(target[key]) != 'object' && getType(src[key]) != 'object' && !isArrayPresent;
@@ -49,19 +57,7 @@ var extendWithArrayOfObjects = function(args) {
       }
     }
   }
-  return args.length ? args[0] : { };
-};
-
-export var delay = (function(){
-  var timer = 0;
-  return function(callback, ms){
-    clearTimeout (timer);
-    timer = setTimeout(callback, ms);
-  };
-})();
-
-export var extend = function() {
-  return extendWithArrayOfObjects(arguments);
+  return arguments.length ? arguments[0] : { };
 };
 
 export var getKeys = function(obj) {
@@ -148,58 +144,29 @@ export var get = function(obj,str) {
   return obj;
 };
 
-var standardObjNameRegex = new RegExp(/^[^\.]*/);
-var replaceObjNameInStandardFormat = function(str,oldObj,newObj) {
-  if(str == oldObj) {
-    str = newObj;
-  } else if(str.indexOf(oldObj + '.') == 0) {
-    str = str.replace(standardObjNameRegex,newObj)
-  };
-  return str;
+let replaceObjNameInBindingStrSingular = (location,oldName,newName) => str => { 
+  switch(location) { 
+    case objNameLocations.FIRST_IN_STRING: 
+      str = str.replace(new RegExp(`^${oldName}(\.)?`), `${newName}$1`);
+      return str; 
+    case objNameLocations.COLON_SEPARATED_SECOND_GROUP: 
+      str = str.replace(new RegExp(`^([^:]+:)${oldName}(\\.)?`),`$1${newName}$2`);
+      return str; 
+    case objNameLocations.COLON_SEPARATED_THIRD_GROUP: 
+      str = str.replace(new RegExp(`^([^:]+:[^:]+:)${oldName}(\\.)?`),`$1${newName}$2`);
+      return str; 
+  }
 };
 
-export var replaceObjNameInBindingStr = function(str,bindType,oldObj,newObj) {
-  var origStr = str + '';
-  if(str.indexOf(':') > -1) {
-    // we have either a bindhandler, simpledata, simpleevent, simplebindattrs, or simplerepeat
-    switch(bindType) {
-      case 'simplerepeat':
-        str = str.split(':');
-        str[1] = replaceObjNameInStandardFormat(str[1],oldObj,newObj);
-        str = str.join(':');
-        break;
-      case 'simpleevent':
-        str = str.split(':');
-        if(str.length >= 3) {
-          str[2] = replaceObjNameInStandardFormat(str[2],oldObj,newObj);
-        }
-        str = str.join(':');
-        break;
-      case 'simplebindhandler':
-      case 'simpledata':
-      case 'simplebindattrs':
-      default:
-        str = str.split(',');
-        for(var i=0; i < str.length; ++i) {
-          str[i] = str[i].split(':');
-          if(str[i].length > 1) {
-            str[i][1] = replaceObjNameInStandardFormat(str[i][1],oldObj,newObj)
-          };
-          str[i] = str[i].join(':');
-        }
-        str = str.join(',');
-        break;
-    }
-  } else {
-    // we have a simplebind or simplebindvalue
-    str = replaceObjNameInStandardFormat(str,oldObj,newObj);
-  }
-  return str;
-};
+export function replaceObjNameInBindingStr(str,bindTypeOpts,oldName,newName) { 
+  return str.split(',')
+            .map(replaceObjNameInBindingStrSingular(bindTypeOpts.objNameLocation,oldName,newName))
+            .join(','); 
+}
 
 export var triggerEvent = function(elem,type){
-  if('createEvent' in d) {
-    var evt = d.createEvent('HTMLEvents');
+  if('createEvent' in document) {
+    var evt = document.createEvent('HTMLEvents');
     evt.initEvent(type,false,true);
     elem.dispatchEvent(evt);
   } else {

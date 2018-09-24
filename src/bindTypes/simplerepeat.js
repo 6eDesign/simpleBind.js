@@ -1,5 +1,6 @@
 import state from '../state';
 import simpleBind from '../simpleBind';
+import { COLON_SEPARATED_SECOND_GROUP } from './const/objNameLocation';
 
 state.repeatCount = 0;
 state.repeatDictionary = { };
@@ -22,7 +23,7 @@ var rewriteBindings = function(elems,originalObjName,newObjName) {
       var attr = 'data-' + state.bindTypes[j]
         , binding = elems[i].getAttribute(attr);
       if(binding) {
-        var newBindingVal = simpleBind.util.replaceObjNameInBindingStr(binding,state.bindTypes[j],originalObjName,newObjName);
+        var newBindingVal = simpleBind.util.replaceObjNameInBindingStr(binding,state.bindTypeOpts[state.bindTypes[j]],originalObjName,newObjName);
         if(newBindingVal != binding) {
           elems[i].setAttribute(attr,newBindingVal);
           elems[i].removeAttribute('data-simplebindcollected');
@@ -78,7 +79,7 @@ var scaleRepeat = function(config,num) {
   }
 };
 
-var collectionRoutine = function(elem,opts){
+var collection = function(elem,opts){
   // collection routine, the function that defines the object stored in boundElems
   opts.simplerepeat = opts.simplerepeat.split(':');
   var objNameAndKey = opts.simplerepeat.pop().split('.');
@@ -98,7 +99,7 @@ var collectionRoutine = function(elem,opts){
   simpleBind.addToBoundElems('simplerepeat',configObj.objName,configObj);
 };
 
-var bindingRoutine = function(config,obj,flush){
+var binding = function(config,obj,flush){
   // binding routine, the function that determines how binding is done for this bind type
   var arrToBind = simpleBind.util.get(obj,config.objKey) || [];
   if(typeof arrToBind['length'] != 'undefined') {
@@ -109,5 +110,9 @@ var bindingRoutine = function(config,obj,flush){
   }
 };
 
-simpleBind.registerBindType('simplerepeat',collectionRoutine,bindingRoutine);
+simpleBind.registerBindType('simplerepeat', {
+  collection,
+  binding,
+  objNameLocation: COLON_SEPARATED_SECOND_GROUP
+});
 simpleBind.extendNamespace('rewriteBindings',rewriteBindings);

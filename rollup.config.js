@@ -1,9 +1,20 @@
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import { uglify } from "rollup-plugin-uglify";
+import buble from 'rollup-plugin-buble';
 import pkg from './package.json';
 
 let isProd = process.env.buildTarget == 'prod';
+
+let plugins = [
+	resolve(),
+	commonjs(), 
+	buble()
+]; 
+
+if(isProd) { 
+	plugins.push(uglify());
+}
 
 export default [
 	// browser-friendly UMD build
@@ -13,13 +24,9 @@ export default [
 			name: 'simpleBind',
 			file: pkg.browser,
 			format: 'umd',
-			sourcemap: false
+			sourcemap: true
 		},
-		plugins: [
-			resolve(),
-			commonjs(), 
-			uglify()
-		]
+		plugins
 	},
 
 	// CommonJS (for Node) and ES module (for bundlers) build.

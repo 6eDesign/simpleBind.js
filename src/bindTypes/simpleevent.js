@@ -1,5 +1,6 @@
 import state from '../state';
 import simpleBind from '../simpleBind';
+import { COLON_SEPARATED_THIRD_GROUP } from './const/objNameLocation';
 
 /*
 
@@ -41,7 +42,7 @@ var addListener = function(elem,eventName,eventHandler,includeObjNameAndKey,objN
   });
 };
 
-var collectionRoutine = function(elem,opts) {
+var collection = function(elem,opts) {
   var events = opts.simpleevent.split(',');
   for(var i=0; i < events.length; ++i) {
     var eventArr = events[i].split(':')
@@ -58,9 +59,15 @@ var collectionRoutine = function(elem,opts) {
   }
 };
 
+var binding = null;
+
 var registerEvent = function(eventName,func) {
   state.eventHandlers[eventName] = func;
 };
 
-simpleBind.registerBindType('simpleevent',collectionRoutine,null);
+simpleBind.registerBindType('simpleevent',{
+  collection,
+  binding,
+  objNameLocation: COLON_SEPARATED_THIRD_GROUP
+});
 simpleBind.extendNamespace('registerEvent', registerEvent);

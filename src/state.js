@@ -7,5 +7,6 @@ export default {
   ready: false,
   beforeReadyBindQueue: [ ], 
   autoReBinding: false, 
-  autoReBindingQueue: { }
+  autoReBindingQueue: { }, 
+  isBindDueToDevTools: false
 };
