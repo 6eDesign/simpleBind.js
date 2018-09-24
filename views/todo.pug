@@ -1,0 +1,33 @@
+extends layouts/default
+
+block body
+  h1 Todo List
+  form(data-simpleevent='submit:addNewItem:todo.newItem')
+    input(type='text', data-simplebindvalue='todo.newItem.text')
+    select(data-simplebindvalue='todo.newItem.priority')
+      option(value='low') Low
+      option(value='medium') Med
+      option(value='high') High
+    button(type='submit') + Add Item
+  ul(data-simplerepeat='task:todo.tasks')
+    li(data-simplebindhandler='taskCompletedHandler:task.completed')
+      // The inside of a repeat needs to contain a single node on the base level like this.
+      button(data-simpleevent='click:removeItem:task.id') remove
+      label
+        input(type='checkbox', data-simplebindvalue='task.completed', value='true')
+        span(data-simplebind='task.description')
+      label
+        input(type='radio', data-simplebindvalue='task.priority', value='low')
+        |  Low
+      label
+        input(type='radio', data-simplebindvalue='task.priority', value='medium')
+        |  Med
+      label
+        input(type='radio', data-simplebindvalue='task.priority', value='high')
+        |  High
+  button(data-simpleevent='click:removeCompleted') Remove Completed
+  div
+    pre(data-simplebind='todo.$base').
+
+append foot
+  script(src='demo/todo.js')

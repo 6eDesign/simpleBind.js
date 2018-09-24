@@ -9,11 +9,16 @@
     "build": "env buildTarget=prod node_modules/.bin/rollup -c",
     "dev": "node_modules/.bin/rollup -c -w",
     "test": "sh scripts/runTests.sh",
-    "pretest": "npm run build"
+    "pretest": "npm run build",
+    "server": "node server"
   },
   "dependencies": {},
   "devDependencies": {
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
+    "express": "^4.16.3",
     "faucet": "0.0.1",
+    "pug": "^2.0.3",
     "rollup": "^0.66.0",
     "rollup-plugin-buble": "^0.19.2",
     "rollup-plugin-commonjs": "^9.1.0",
