@@ -6,23 +6,23 @@ var todoObj = {
 	tasks: [ 
 		{ 
 			id: new Date().getTime(),
-			description: 'make simpleBind more awesome', 
-			completed: false, 
+			description: 'use rollup to build simplebind.js', 
+			completed: true, 
 			priority: 'high'
 		}, { 
 			id: new Date().getTime() + 1,
-			description: 'make simpleBind more modular', 
+			description: 'make it easier to create new simplebind bind types', 
 			completed: true, 
 			priority: 'high'
 		}, { 
 			id: new Date().getTime() + 2,
-			description: 'make simpleBind faster', 
-			completed: false, 
+			description: 'use some es6 via buble', 
+			completed: true, 
 			priority: 'high'
 		}, { 
 			id: new Date().getTime() + 3,
-			description: 'make simpleBind smaller', 
-			completed: false, 
+			description: 'make simpleBind smaller with tree shaking', 
+			completed: true, 
 			priority: 'high'
 		}
 	]

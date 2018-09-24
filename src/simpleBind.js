@@ -1,17 +1,21 @@
 import * as util from './simpleBindUtil';
 import state from './state';
 
-const devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({latency: 0});
-devTools.subscribe((message,...args) => {
-  if (message.type === 'DISPATCH' && message.state) {
-    // console.log(args,'DevTools requested to change the state to', message.state);
-    let newState = JSON.parse(message.state); 
-    for(var key in newState) {
-      state.isBindDueToDevTools = true;
-      lib.bind(key,newState[key]);
+const useDevTools = typeof window.__REDUX_DEVTOOLS_EXTENSION__ != 'undefined'; 
+
+if(useDevTools) { 
+  const devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({latency: 0});
+  devTools.subscribe((message,...args) => {
+    if (message.type === 'DISPATCH' && message.state) {
+      // console.log(args,'DevTools requested to change the state to', message.state);
+      let newState = JSON.parse(message.state); 
+      for(var key in newState) {
+        state.isBindDueToDevTools = true;
+        lib.bind(key,newState[key]);
+      }
     }
-  }
-});
+  });
+}
 
 
 var d = document;
@@ -134,7 +138,7 @@ lib.bind = function(objName,obj) {
       var eligibleForDevTools = state.isBindDueToDevTools == false; 
       if(state.isBindDueToDevTools) state.isBindDueToDevTools = false;
       processBindings(objName,obj);
-      if(!eligibleForDevTools) return;
+      if(!eligibleForDevTools || !useDevTools) return;
       if(!isARepeatKey(objName)) {
         devTools.send(`${objName}-bound`, removeRepeatsFromState(state.boundObjects))
       } 
