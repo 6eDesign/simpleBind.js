@@ -144,16 +144,20 @@ export var get = function(obj,str) {
   return obj;
 };
 
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 let replaceObjNameInBindingStrSingular = (location,oldName,newName) => str => { 
   switch(location) { 
     case objNameLocations.FIRST_IN_STRING: 
-      str = str.replace(new RegExp(`^${oldName}(\.)?`), `${newName}$1`);
+      str = str.replace(new RegExp(`^${escapeRegExp(oldName)}(\.)?`), `${newName}$1`);
       return str; 
     case objNameLocations.COLON_SEPARATED_SECOND_GROUP: 
-      str = str.replace(new RegExp(`^([^:]+:)${oldName}(\\.)?`),`$1${newName}$2`);
+      str = str.replace(new RegExp(`^([^:]+:)${escapeRegExp(oldName)}(\\.)?`),`$1${newName}$2`);
       return str; 
     case objNameLocations.COLON_SEPARATED_THIRD_GROUP: 
-      str = str.replace(new RegExp(`^([^:]+:[^:]+:)${oldName}(\\.)?`),`$1${newName}$2`);
+      str = str.replace(new RegExp(`^([^:]+:[^:]+:)${escapeRegExp(oldName)}(\\.)?`),`$1${newName}$2`);
       return str; 
   }
 };
