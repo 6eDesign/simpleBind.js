@@ -8,5 +8,5 @@ export default {
   beforeReadyBindQueue: [ ], 
   autoReBinding: false, 
   autoReBindingQueue: { }, 
-  isBindDueToDevTools: false
+  plugins: []
 };

@@ -1,23 +1,6 @@
 import * as util from './simpleBindUtil';
 import state from './state';
 
-const useDevTools = typeof window.__REDUX_DEVTOOLS_EXTENSION__ != 'undefined'; 
-var devTools;
-if(useDevTools) { 
-  devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({latency: 0});
-  devTools.subscribe((message,...args) => {
-    if (message.type === 'DISPATCH' && message.state) {
-      // console.log(args,'DevTools requested to change the state to', message.state);
-      let newState = JSON.parse(message.state); 
-      for(var key in newState) {
-        state.isBindDueToDevTools = true;
-        lib.bind(key,newState[key]);
-      }
-    }
-  });
-}
-
-
 var d = document;
 
 var init = function() { 
@@ -85,6 +68,19 @@ var processBindings = function(objName,obj) {
   }
 }; 
 
+let processPlugins = (lifecycleHook,...args) => {
+  switch(lifecycleHook) { 
+    case 'preBind': 
+    case 'postBind': 
+      let [objName,obj] = args;
+      state.plugins.forEach(plugin => obj = typeof plugin[lifecycleHook] == 'function' 
+        ? plugin[lifecycleHook].apply(null,args)
+        : obj
+      )
+      return obj;
+  }
+};
+
 d.addEventListener('DOMContentLoaded',function(){
   init();
 }); 
@@ -123,25 +119,24 @@ lib.recollectDOM = function(context,autoReBind) {
   domCollection(context,autoReBind);
 }; 
 
-let isARepeatKey = name => name.indexOf('__repeat') == 0;
 
-let removeRepeatsFromState = obj => { 
-  let newObj = util.extend({},state.boundObjects); 
-  Object.keys(newObj).filter(isARepeatKey).forEach(k => delete newObj[k]);
-  return newObj;
+let pluginDefaults = { 
+  preBind: null,
+  postBind: null,
+  name: ''
+}; 
+
+lib.registerPlugin = (opts={}) => { 
+  state.plugins.push(util.extend({},pluginDefaults,opts));
 }; 
 
 lib.bind = function(objName,obj) {
   if(typeof objName == 'string' && typeof obj != 'undefined') {
     if(typeof state.boundElems[objName] == 'undefined') state.boundElems[objName] = [];
     if(state.ready) { 
-      var eligibleForDevTools = state.isBindDueToDevTools == false; 
-      if(state.isBindDueToDevTools) state.isBindDueToDevTools = false;
+      obj = processPlugins('preBind',objName,obj); 
       processBindings(objName,obj);
-      if(!eligibleForDevTools || !useDevTools) return;
-      if(!isARepeatKey(objName)) {
-        devTools.send(`${objName}-bound`, removeRepeatsFromState(state.boundObjects))
-      } 
+      obj = processPlugins('postBind',objName,obj);
     } else { 
       state.beforeReadyBindQueue.push({name: objName, obj: obj});
     }

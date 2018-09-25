@@ -1,6 +1,6 @@
 {
   "name": "simplebind.js",
-  "version": "2.0.0-alpha",
+  "version": "2.0.0-alpha2",
   "description": "Lightweight, extendable, dependency-free binding framework. Fast.",
   "main": "dist/simpleBind.cjs.js",
   "module": "dist/simpleBind.esm.js",

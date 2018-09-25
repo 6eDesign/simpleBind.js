@@ -29,6 +29,24 @@ export default [
 		plugins
 	},
 
+	// browser-friendly demo builds
+	{
+		input: 'src/demo/todo.js',
+		external: [ ...Object.keys(pkg.peerDependencies || {}), ],
+		output: { 
+			name: 'todo',
+			file: 'dist/todo.js',
+			format: 'umd',
+			sourcemap: true
+		},
+		plugins: [
+			resolve(), 
+			commonjs(), 
+			buble(),
+			// uglify()
+		]
+	},
+
 	// CommonJS (for Node) and ES module (for bundlers) build.
 	// (We could have three entries in the configuration array
 	// instead of two, but it's quicker to generate multiple
