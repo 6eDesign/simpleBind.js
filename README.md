@@ -3,10 +3,10 @@ simpleBind.js
 A simple, modular, small, and optimized data-binding library.  
 
 ### Getting Started
-**simpleBind.js** has no external dependencies.  Simply download or clone this repository and include the minified simpleBind.{Version}.min.js file in your document.
+**simpleBind.js** has no external dependencies.  Simply download or clone this repository and include the minified simpleBind.umd.js file in your document.
 
 ```
-<script type='text/javascript' src='simpleBind.2.0.min.js'></script>	
+<script type='text/javascript' src='/simpleBind.umd.js'></script>	
 ``` 
 
 You can also install simpleBind with NPM and use as either a Common JS (CJS) or ES Module: 
