@@ -4,7 +4,7 @@ simpleBind.registerBindHandler('logValueBH',function(evt,value){
 simpleBind.registerEvent('alertHello',function(evt,value){
   alert('Hello World, ' + value);
 }); 
-simpleBind.registerEvent('exampleClickEvent',function(val){
+simpleBind.registerEvent('exampleClickEvent',function(evt,val){
   console.log(this,val);
 }); 
 

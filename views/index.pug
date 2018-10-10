@@ -1,0 +1,62 @@
+extends layouts/default
+
+block body
+  h1 Basic Visual Tests
+  div
+    h4 Array binding (not an array nested in object)
+    div You should see the numbers 0-4 next to the string 'hello world' below
+    ul(data-simplerepeat='item:arrayObject')
+      li
+        span(data-simplebind='item.count')
+        |  - 
+        span(data-simplebind='example.text')
+        | *
+    div
+      | *hello world is a non-array bound-object inside of a repeat template to ensure that the autoRebindingQueue is working properly for simpleBind.recollectDOM() with flushCache=true
+  hr
+  h4 Nested Repeats w/ nested data-simplebindvalue and data-simplebindattrs
+  select(data-simplebindvalue='someUndefinedObj.someProp.someProp.someProp.taskOid', data-simplerepeat='parentTask:pro.tasksForChosenZip')
+    optgroup(data-simplebindattrs='label:parentTask.description', data-simplerepeat='task:parentTask.childTasks')
+      option(data-simplebindvalue='task.taskOid', data-simplebind='task.description')
+  hr
+  h4 Input binding
+  input(type='text', data-simplebindvalue='example.text', data-simpledata='someProp:example.text,someOtherProp:example.fakeProp')
+  button.something(data-simplebind='example.text', data-simpleevent='click:exampleClickEvent:example.text')
+  hr
+  h4 Array (simplerepeat) binding w/ nested input value bindings
+  div
+    ul(data-simplerepeat='item:example.arrays.items')
+      li
+        div
+          | Example text: 
+          span(data-simplebind='example.text')
+          |             	Prop 1: 
+          button.something(data-simplebind='item.prop1')
+        div
+          input(type='text', data-simplebindvalue='item.prop2')
+          span(data-simplebind='item.prop2')
+        div
+          h4 Binding multiple inputs to same value with single change event on checkbox:
+          input(type='checkbox', data-simplebindvalue='item.value', data-simpleevent='change:checkboxChecked')
+          label
+            input(type='radio', data-simplebindvalue='item.value', value='true')
+            |  True
+          label
+            input(type='radio', data-simplebindvalue='item.value', value='false')
+            |  False
+  hr
+  div
+    h4 Key that doesn't exist test (should see nothing in pre below)
+    pre(data-simplebind='example.fakekey').
+  hr
+  h4 Contents of 'example' object:
+  div
+    pre(data-simplebind='example').
+  hr
+  h4 Simple event
+  div
+    | button should alert "hello world + ${example.text}"
+    button(data-simpleevent='click:alertHello:example.text') Click Me
+
+append foot
+  script(src='/demo/test-demo.js')

@@ -1,13 +1,31 @@
 {
   "name": "simplebind.js",
-  "version": "1.1.22",
+  "version": "2.0.0",
   "description": "Lightweight, extendable, dependency-free binding framework. Fast.",
-  "main": "gulpfile.js",
-  "directories": {
-    "test": "test"
-  },
+  "main": "dist/simpleBind.cjs.js",
+  "module": "dist/simpleBind.esm.js",
+  "browser": "dist/simpleBind.umd.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "env buildTarget=prod node_modules/.bin/rollup -c",
+    "dev": "node_modules/.bin/rollup -c -w",
+    "test": "sh scripts/runTests.sh",
+    "pretest": "npm run build",
+    "server": "node server"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
+    "express": "^4.16.3",
+    "faucet": "0.0.1",
+    "pug": "^2.0.3",
+    "rollup": "^0.66.0",
+    "rollup-plugin-buble": "^0.19.2",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-uglify": "^6.0.0",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.9.1"
   },
   "repository": {
     "type": "git",
@@ -22,12 +40,5 @@
   "bugs": {
     "url": "https://github.com/6eDesign/simpleBind.js/issues"
   },
-  "homepage": "https://github.com/6eDesign/simpleBind.js#readme",
-  "dependencies": {
-    "gulp": "^3.9.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-jshint": "^1.11.2",
-    "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.4.1"
-  }
+  "homepage": "https://github.com/6eDesign/simpleBind.js#readme"
 }

@@ -1,3 +1,7 @@
+import state from '../state';
+import simpleBind from '../simpleBind';
+import { COLON_SEPARATED_THIRD_GROUP } from './const/objNameLocation';
+
 /*
 
   Events take the form: 'eventName:eventHandlerName:optionalObjName.key.key'
@@ -21,41 +25,49 @@
 
 */
 
-simpleBind = (function(w,d,util,pub){
-  var state = pub.getState();
-  state.eventHandlers = { };
+state.eventHandlers = { };
 
-
-  var collectionRoutine = function(elem,opts) {
-    var events = opts.simpleevent.split(',');
-    for(var i=0; i < events.length; ++i) {
-      var eventArr = events[i].split(':')
-        , eventName = eventArr.shift()
-        , eventHandler = eventArr.shift();
-      var objNameAndKey = eventArr.length ? eventArr.shift().split('.') : false;
-      if(objNameAndKey) {
-        var objName = objNameAndKey.shift()
-          , objKey = objNameAndKey.join('.');
-      }
-      elem.addEventListener(eventName,function(evt){
-        if(typeof state.eventHandlers[eventHandler] != 'undefined') {
-          if(objNameAndKey) {
-            if(typeof state.boundObjects[objName] != 'undefined') {
-              state.eventHandlers[eventHandler].call(this,evt,util.get(state.boundObjects[objName],objKey));
-              return;
-            }
-          }
-          return state.eventHandlers[eventHandler].call(this,evt,undefined)
+var addListener = function(elem,eventName,eventHandler,includeObjNameAndKey,objName,objKey) {
+  elem.addEventListener(eventName,function(evt){
+    if(typeof state.eventHandlers[eventHandler] != 'undefined') {
+      if(includeObjNameAndKey) {
+        if(typeof state.boundObjects[objName] != 'undefined') {
+          state.eventHandlers[eventHandler].call(this,evt, simpleBind.util.get(state.boundObjects[objName],objKey));
+          return;
         }
-      });
+      }
+      // still call the event handler even if it obj is undefined
+      return state.eventHandlers[eventHandler].call(this,evt,undefined);
     }
-  };
+  });
+};
 
-  pub.registerBindType('simpleevent',collectionRoutine,null);
+var collection = function(elem,opts) {
+  var events = opts.simpleevent.split(',');
+  for(var i=0; i < events.length; ++i) {
+    var eventArr = events[i].split(':')
+      , eventName = eventArr.shift()
+      , eventHandler = eventArr.shift();
+    var objNameAndKey = eventArr.length ? eventArr.shift().split('.') : false;
+    if(objNameAndKey) {
+      var objName = objNameAndKey.shift()
+        , objKey = objNameAndKey.join('.');
+        addListener(elem,eventName,eventHandler,objNameAndKey,objName,objKey);
+    } else {
+      addListener(elem,eventName,eventHandler,objNameAndKey);
+    }
+  }
+};
 
-  pub.registerEvent = function(eventName,func) {
-    state.eventHandlers[eventName] = func;
-  };
+var binding = null;
 
-  return pub;
-})(window,document,simpleBind.util,simpleBind||{});
+var registerEvent = function(eventName,func) {
+  state.eventHandlers[eventName] = func;
+};
+
+simpleBind.registerBindType('simpleevent',{
+  collection,
+  binding,
+  objNameLocation: COLON_SEPARATED_THIRD_GROUP
+});
+simpleBind.extendNamespace('registerEvent', registerEvent);

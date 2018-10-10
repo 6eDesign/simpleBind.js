@@ -6,29 +6,45 @@ A simple, modular, small, and optimized data-binding library.
 **simpleBind.js** has no external dependencies.  Simply download or clone this repository and include the minified simpleBind.{Version}.min.js file in your document.
 
 ```
-	<script type='text/javascript' src='simpleBind.2.0.min.js'></script>	
+<script type='text/javascript' src='simpleBind.2.0.min.js'></script>	
 ``` 
 
-**simpleBind.js** is a minimal JavaScript data-binding framework. At the basic level it allows you to bind JSON objects to elements in your DOM. A rudimentary example would work like this.  
+You can also install simpleBind with NPM and use as either a Common JS (CJS) or ES Module: 
+
+```
+npm i --save simplebind.js
+```
+
+Common JS: 
+
+```
+var simpleBind = require('simplebind.js');
+```
+
+ES Module: 
+
+```
+import simpleBind from 'simplebind.js';
+```
+
+**simpleBind.js** is a minimal JavaScript data-binding framework. At the basic level it allows you to bind JSON objects to elements in your DOM. A rudimentary example would work like this:  
 
 1. HTML
 
 ```
-	<h1 data-simplebind="basicExample.text"></h1>
+<h1 data-simplebind="basicExample.text"></h1>
 ```
 
 2. JavaScript
 
 ```
-	document.addEventListener("DOMContentLoaded",function(){
-		simpleBind.bind('basicExample',{text: 'Welcome to SimpleBind.js'}); 
-	}); 
+simpleBind.bind('basicExample',{text: 'Welcome to SimpleBind.js'}); 
 ```
 
 3. Result
 
 ```
-	<h1 data-simplebind="basicExample.text">Welcome to SimpleBind.js</h1>
+<h1 data-simplebind="basicExample.text">Welcome to SimpleBind.js</h1>
 ```
 
 While that is useful, that is just the most basic type of binding available in **simpleBind.js**.  You can also bind arrays and create "simplerepeat's", bind objects to inputs for bidirectional data-binding, map JSON attributes to DOM node attributes or data properties, and much more.  We've also included a simple event system to simplify working with bound-element's events and to more easily access important object values from event callbacks.  
@@ -46,10 +62,10 @@ There are numerous binding types available and you can also extend **simpleBind.
 
 ##### example: 
 ```
-	<!-- The values bound to this element will be assigned as text -->
-	<h1 data-simplebind="example.text"></h1>
-	<!-- The values bound to this element will be assigned as innerHTML -->
-	<h1 data-simplebind="example.html" data-simplebindhtml="true"></h1>
+<!-- The values bound to this element will be assigned as text -->
+<h1 data-simplebind="example.text"></h1>
+<!-- The values bound to this element will be assigned as innerHTML -->
+<h1 data-simplebind="example.html" data-simplebindhtml="true"></h1>
 ```
 
 
@@ -60,75 +76,75 @@ There are numerous binding types available and you can also extend **simpleBind.
 ###### **(data-simplerepeat=innerName:objName.objKey)**
 **simplerepeat** binds are made for looping over arrays of objects.  For instance, if you were given an array of the states in the USA: 
 ```
-	var states = [
-		{
-			name: "Alabama", 
-			code: "AL"
-		}, {
-			name: "Alaska", 
-			code: "AK"
-		}, { 
-			name: "Arizona", 
-			code: "AZ"
-		} // , ...
-	]; 
+var states = [
+	{
+		name: "Alabama", 
+		code: "AL"
+	}, {
+		name: "Alaska", 
+		code: "AK"
+	}, { 
+		name: "Arizona", 
+		code: "AZ"
+	} // , ...
+]; 
 ```
 and you wanted to create an un-ordered list of these states in your document, you could create the following HTML: 
 ```
-	<ul data-simplerepeat="state:states">
-		<li>
-			<div>
-				<span data-simplebind="state.name"></span>
-				(<span data-simplebind="state.code"></span>)
-			</div>
-		</li>
-	</ul>
+<ul data-simplerepeat="state:states">
+	<li>
+		<div>
+			<span data-simplebind="state.name"></span>
+			(<span data-simplebind="state.code"></span>)
+		</div>
+	</li>
+</ul>
 ```
 and then you could bind the 'states' object with the following JavaScript: 
 ```
-	simpleBind.bind('states',states);
+simpleBind.bind('states',states);
 ```
 which would populate your list with all of the states found in the array: 
 ```
-	<ul data-simplerepeat="state:states">
-		<li>
-			<div>
-				<span data-simplebind="state.name">Alabama</span>
-				(<span data-simplebind="state.code">AL</span>)
-			</div>
-		</li>
-		<li>
-			<div>
-				<span data-simplebind="state.name">Alaska</span>
-				(<span data-simplebind="state.code">AK</span>)
-			</div>
-		</li>
-		<li>
-			<div>
-				<span data-simplebind="state.name">Arizona</span>
-				(<span data-simplebind="state.code">AZ</span>)
-			</div>
-		</li>
-		<!-- and so on... -->
-	</ul>
+<ul data-simplerepeat="state:states">
+	<li>
+		<div>
+			<span data-simplebind="state.name">Alabama</span>
+			(<span data-simplebind="state.code">AL</span>)
+		</div>
+	</li>
+	<li>
+		<div>
+			<span data-simplebind="state.name">Alaska</span>
+			(<span data-simplebind="state.code">AK</span>)
+		</div>
+	</li>
+	<li>
+		<div>
+			<span data-simplebind="state.name">Arizona</span>
+			(<span data-simplebind="state.code">AZ</span>)
+		</div>
+	</li>
+	<!-- and so on... -->
+</ul>
 ```
 **note:** *simplerepeat* blocks must have a single child node.  This child node can have as many nested children as you would like but it should have no siblings, for example, this is OK: 
 ```
-	<ul data-simplerepeat="item:example.itemsArray"> <!-- has only one child -->
-		<li>
-			<div>
-				<span data-simplebind="item.text"></span>
-				<span data-simplebind="item.otherProp"></span>
-			</div>
-		</li>
-	</ul>
+<ul data-simplerepeat="item:example.itemsArray"> <!-- has only one child -->
+	<li>
+		<div>
+			<span data-simplebind="item.text"></span>
+			<span data-simplebind="item.otherProp"></span>
+		</div>
+	</li>
+</ul>
 ```
 but this will not work: 
 ```
-	<div data-simplerepeat="item:example.itemsArray"> <!-- has 2 children -->
-		<div data-simplebind="item.text"></div>
-		<div data-simplebind="item.otherProp"></div>
-	</div>
+<div data-simplerepeat="item:example.itemsArray"> <!-- has 2 children -->
+	<div data-simplebind="item.text"></div>
+	<div data-simplebind="item.otherProp"></div>
+</div>
 ```
 
 
@@ -142,25 +158,25 @@ The basic idea is simple, you attach a data-simpleevent property to an element, 
 
 Event callbacks are registered by calling **simplebind.registerEvent(eventName,eventCallbackFn)**.  For example, we might  register a submit handler on a registration form in the HTML: 
 ```
-	<form data-simpleevent="submit:validateForm:registrationForm">
-		<input type="text" data-simplebindvalue="registrationForm.username" />
-		<input type="text" data-simplebindvalue="registrationForm.password" />
-	</form>
+<form data-simpleevent="submit:validateForm:registrationForm">
+	<input type="text" data-simplebindvalue="registrationForm.username" />
+	<input type="text" data-simplebindvalue="registrationForm.password" />
+</form>
 ```  
 You could then define and register an event handler/callback function in JavaScript and register it with **simpleBind**: 
 ```
-	var validateForm = function(event,form) { 
-		// inside of this function, you will have access to the 'registrationForm' 
-		// object (parameter 'form') and all of its bound values.
-		if(form.password.length > 10 && isAvailable(form.username)) { 
-			// allow form submission, do nothing..
-		} else { 
-			// show some errors or something
-			// and use event argument to prevent form submission: 
-			event.preventDefault();
-		}
-	}; 
-	simpleBind.registerEvent('validateForm',validateForm); 
+var validateForm = function(event,form) { 
+	// inside of this function, you will have access to the 'registrationForm' 
+	// object (parameter 'form') and all of its bound values.
+	if(form.password.length > 10 && isAvailable(form.username)) { 
+		// allow form submission, do nothing..
+	} else { 
+		// show some errors or something
+		// and use event argument to prevent form submission: 
+		event.preventDefault();
+	}
+}; 
+simpleBind.registerEvent('validateForm',validateForm); 
 ```
 **simpleevent's** will work with any event type and, like all other bind types, can be safely nested inside of **simplerepeat's**.
 
@@ -173,54 +189,72 @@ You could then define and register an event handler/callback function in JavaScr
 
 ##### text input example: 
 ```
-	<!-- Basic Input -->
-	<input type="text" data-simplebindvalue="example.nestedObject.someKey" />
+<input type="text" data-simplebindvalue="example.nestedObject.someKey" />
 ```
 
 ##### select input example: 
 **note:** the binding on a select will only work if the bound value is equal to the value of one of the select's options (otherwise selectedIndex will be set to -1).  In other words: **simpleBind.js** will not create new options for you (but if you want to extend this bind type to do so, then we'll talk more about that later in this README).
 ```
-	<!-- Select -->
-	<select data-simplebindvalue="example.someProp">
-		<option value="0">Option 0 Selected</option>
-		<option value="1">Option 1 Selected</option>
-		<option value="2">Option 2 Selected</option>
-		<option value="3">Option 3 Selected</option>
-	</select>
+<select data-simplebindvalue="example.someProp">
+	<option value="0">Option 0 Selected</option>
+	<option value="1">Option 1 Selected</option>
+	<option value="2">Option 2 Selected</option>
+	<option value="3">Option 3 Selected</option>
+</select>
 ```
 ```
-	simpleBind.bind('example',{someProp: 2});
+simpleBind.bind('example',{someProp: 2});
 ```
 
 ##### radio input example: 
 **note:** like select binding, radio binding will not create new radio options for you.  If the radio's value attribute equals the bound value then it will become selected.  Similarly, if a radio button is selected this will update the bound value to the radio's value.  
 ```
-	<!-- Radio -->
-	<label>
-		<input type="radio" data-simplebindvalue="example.someProp" value="0" />
-		Option 0
-	</label>
-	<label>
-		<input type="radio" data-simplebindvalue="example.someProp" value="1" />
-		Option 1
-	</label>
+<label>
+	<input type="radio" data-simplebindvalue="example.someProp" value="0" />
+	Option 0
+</label>
+<label>
+	<input type="radio" data-simplebindvalue="example.someProp" value="1" />
+	Option 1
+</label>
 ```
 ```
-	simpleBind.bind('example',{someProp: 1});
+simpleBind.bind('example',{someProp: 1});
 ```
 
 ##### checkbox input example: 
 **note:** checkboxes are for boolean values.  If the bound value is true then the input will be checked, otherwise it will be unchecked.
 ```
-	<!-- Checkbox -->
-	<label>
-		<input type="checkbox" data-simplebindvalue="example.someBoolean" />
-		Some Boolean?
-	</label>
+<label>
+	<input type="checkbox" data-simplebindvalue="example.someBoolean" />
+	Some Boolean?
+</label>
 ```
 ```
-	// this will check the example checkbox: 
-	simpleBind.bind('example',{someBoolean: true}); 
+// this will check the example checkbox: 
+simpleBind.bind('example',{someBoolean: true}); 
+```
+
+----------
+
+### simplebindclass
+###### **(data-simplebindclass='some-class-name:objName.objKey')**
+**simplebindclass** allows you to define a boolean attribute on your bound object which dictates whether a particular class ('some-class-name' in the above example) is applied or removed from an element.
+
+----------
+
+### simplebindattrs
+###### **(data-simplebindattrs='attrName:objName.objKey,attrName2:objName.objKey')**
+**simplebindattrs** allows you to bind element attributes (anything that can be set via element.setAttribute(key,val)).  Here is an example that will set the `href` property of an anchor element: 
+
+HTML
+```
+<a data-simplebindattrs='href:exampleObj.linkHref'>Click this link</a>
+```
+
+JavaScript
+```
+simpleBind.bind('exampleObj',{ linkHref: 'http://www.google.com' });
 ```
 
 ----------
@@ -234,14 +268,14 @@ This is a very useful aspect of **simpleBind.js** and can be used to do a wide v
 
 HTML
 ```
-	<button type="submit" data-simplebindhandler="enableWhenValid:form.isValid" />
+<button type="submit" data-simplebindhandler="enableWhenValid:form.isValid" />
 ```
 JavaScript
 ```
-	var enableWhenValid = function(elem,valid) { 
-		elem.setAttribute('disabled',valid ? 'false'  : 'true'); 
-	}; 
-	simpleBind.registerBindHandler('enableWhenValid',enableWhenValid); 
+var enableWhenValid = function(elem,valid) { 
+	elem.setAttribute('disabled',valid ? 'false'  : 'true'); 
+}; 
+simpleBind.registerBindHandler('enableWhenValid',enableWhenValid); 
 ```
 
 ----------
@@ -253,16 +287,16 @@ JavaScript
 
 JavaScript
 ```
-	var dataObj = { 
-		enabled: true, 
-		id: 239823
-	}; 
-	simpleBind.bind('theData',dataObj);
+var dataObj = { 
+	enabled: true, 
+	id: 239823
+}; 
+simpleBind.bind('theData',dataObj);
 ```
 
 We could bind a single, *data-is-enabled* attribute to an element like this: 
 ```
-	<div data-simpledata="isEnabled:theData.enabled"></div>
+<div data-simpledata="isEnabled:theData.enabled"></div>
 ```
 
 **notice:** take note that you do not need to specify the 'data-' portion of the attribute that you want to bind and that the rest of the attribute string is converted from **snake-case** to **camelCase** when declaring the binding in the HTML.  
@@ -270,7 +304,7 @@ We could bind a single, *data-is-enabled* attribute to an element like this:
 Similar to **simpleevent's** and **simplebindhandler's**, if you'd like to specify multiple bound data-attributes, you can do so by separating the attributes by a comma.  For example, to set both a *data-is-enabled* and a *data-id* attribute in the above example, we could use the following HTML: 
 
 ```
-	<div data-simpledata="isEnabled:theData.enabled,id:theData.id"></div>
+<div data-simpledata="isEnabled:theData.enabled,id:theData.id"></div>
 ```
 
 
@@ -287,7 +321,7 @@ For this example, we will create a simplified version of the **data-simplebindva
 2. Next we define the processing function.  This function will be called whenever an element's bound value is updated.  The arguments passed to this function include the *config* object created in the last step and the object that was bound. This function is responsible for updating the value of the element to the value of the bound object.
 3. Finally, we register this bind type by calling:
 ```
-	simpleBind.registerBindType(bindType,collectionFn,processingFn)  
+simpleBind.registerBindType(bindType,collectionFn,processingFn)  
 ```
 
 **Example**
@@ -332,6 +366,4 @@ var bindingRoutine = function(config,obj,flush){
 ####4. Finally, we register this bind type by calling: 
 ```
 simpleBind.registerBindType('simplebind',collectionRoutine,bindingRoutine); 
-
 ```
-
