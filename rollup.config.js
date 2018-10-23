@@ -2,6 +2,7 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import { uglify } from "rollup-plugin-uglify";
 import buble from 'rollup-plugin-buble';
+import browsersync from 'rollup-plugin-browsersync';
 import pkg from './package.json';
 
 let isProd = process.env.buildTarget == 'prod';
@@ -14,6 +15,13 @@ let plugins = [
 
 if(isProd) { 
 	plugins.push(uglify());
+}
+
+if(!isProd) { 
+	plugins.push(browsersync({
+		proxy: 'localhost:3005/todo',
+		files: ['views/*.pug', 'dist/*.js']
+	}));
 }
 
 export default [

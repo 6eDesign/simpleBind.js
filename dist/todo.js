@@ -50,7 +50,6 @@
 	var taskIsNot = function(key,val) { return function(task) { console.log(((task[key]) + " vs " + val)); return task[key] !== val; }};
 
 	simpleBind.registerEvent('removeItem',function(evt,todoID){
-		console.log(todoObj,todoID);
 		todoObj.tasks = todoObj.tasks.filter(taskIsNot('id',todoID));
 		simpleBind.bind('todo',todoObj);
 	});
